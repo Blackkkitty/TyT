@@ -1,7 +1,7 @@
 /**
  * Tytjs By BLACKKITTY 2018.02.25
  */
-var ehtml = (id)=>{ return document.getElementById(id); };
+var ehtml = (id) => { return document.getElementById(id); };
 var TY = {
     Prc: function () {
         var _this = this;
@@ -74,7 +74,11 @@ var TY = {
         this.txtGroups = [];        // 当前文本分段
         this.currentGroup = -1;     // 当前段落
         this.currentTxt = "";       // 当前段落文本
-        this.currentWord = "";      // 当前单词
+        this.currentWord = {
+            word: "",               /* 当前单词   */
+            begin: 0,               /* 单词左边界 */
+            end: 0                  /* 单词右边界 */
+        };
         this.inptxt = "";           // 当前已输入文本
         this.inppos = 0;            // 当前键入位置
         this.timer = 0;             // 计时器
@@ -284,56 +288,86 @@ var TY = {
         };
 
         /************** 数据处理方法 ***************/
-        // 获取prc_txt的html格式字符串以及完成情况
-        function _getDisplayHtml(txt, inp) {
-            var html = "";
-            var errs = new Map();
-            var now = inp.length;
-            for (var i = 0; i < inp.length && i < txt.length; i++) {
+        // 完整刷新prc_text
+        function refreshFullDisplayHtml(txt, inp) {
+            let html = "";
+            let errs = new Map();
+            let now = inp.length;
+            for (let i = 0; i < inp.length && i < txt.length; i++) {
                 if (inp.charAt(i) != txt.charAt(i)) {
                     errs[i] = true;
                 }
             }
             let style = _this.currentcharstyle;
             if (_this.RT_Crossword) style = 0;
-            for (var i = 0; i < txt.length; i++) {
-                var classname = "normal-" + style;
-                if (i < now) classname = "past-" + style;
-                else if (i == now) classname = "now-" + style;
+            for (let i = 0; i < txt.length; i++) {
+                let classname = "normal-" + style;
                 if (errs[i]) classname = "err-" + style;
-                var c = txt.charAt(i);
-                if (c == "\n") {
-                    c = ENTERKEY;
-                    html += '<span class="' + classname + '">' + c + "</span>";
-                    html += '<br>';
+                else if (i === now) classname = "now-" + style;
+                else if (i < now) classname = "past-" + style;
+                let c = txt.charAt(i);
+                if (c === "\n") {
+                    html += '<span class="' + classname + '">' + ENTERKEY + "</span><br>";
                     continue;
                 }
-                if (c == " ") {
-                    if (_this.RT_Crossword) classname += " space-0";
+                if (c === " ") {
+                    if (_this.RT_Crossword) classname += '" isspace="true';
                     c = errs[i] ? SPACEKEYVISIBLE : SPACEKEY;
                 }
                 html += '<span class="' + classname + '">' + c + "</span>";
             }
-
-            return { html: html, finish: inp == txt };
+            _this.etxt.innerHTML = html;
+        }
+        // 快速刷新prc_text
+        function refreshDisplayHtml(txt, inp) {
+            let v = _this.etxt, now = inp.length;
+            let style = _this.currentcharstyle;
+            let n = v.childElementCount;
+            if (inp === txt) return true;
+            if (_this.RT_Crossword) style = 0;
+            function refresh(k, pos) {
+                let ci = inp.charAt(k), cj = txt.charAt(k);
+                v.children[k].className = "";
+                if (k >= now) ci = cj;
+                if (cj === " ") {
+                    v.children[k].innerHTML = SPACEKEY;
+                    if (ci === cj) {
+                        v.children[k].className += pos + "-" + style;
+                    } else {
+                        v.children[k].innerHTML = SPACEKEYVISIBLE;
+                        v.children[k].className += "err-" + style;
+                    }
+                } else {
+                    v.children[k].innerHTML = cj;
+                    if (ci === cj) {
+                        v.children[k].className += pos + "-" + style;
+                    } else {
+                        v.children[k].className += "err-" + style;
+                    }
+                }
+            }
+            refresh(now, "now");
+            if (now > 0) refresh(now - 1, "past");
+            if (now < n - 1) refresh(now + 1, "normal");
+            return false;
         }
         // 获取prc_inp的html格式字符串
         function _getInpHtml(inp, pos) {
-            var html = "";
-            var entercount = 0;
-            for (var i = 0; i < inp.length; i++) {
-                var c = inp.charAt(i);
-                var span = "<span>";
-                if (i == pos) span = '<span class="cursor">';
-                if (c == "\n") {
+            let html = "";
+            let entercount = 0;
+            for (let i = 0; i < inp.length; i++) {
+                let c = inp.charAt(i);
+                let span = "<span>";
+                if (i === pos) span = '<span class="cursor">';
+                if (c === "\n") {
                     html += span + ENTERKEY + "</span>";
                     if (++entercount < ROWS) html += "<br>";
                 } else {
-                    if (c == " ") c = SPACEKEY;
+                    if (c === " ") c = SPACEKEY;
                     html += span + c + "</span>";
                 }
             }
-            if (pos == inp.length)
+            if (pos === inp.length)
                 html += '<span class="cursor">&nbsp;</span>';
             else
                 html += '<span>&nbsp;</span>';
@@ -611,7 +645,8 @@ var TY = {
             }
 
             // 刷新显示
-            _this.etxt.innerHTML = _getDisplayHtml(_this.currentTxt, _this.inptxt).html;
+            //_this.etxt.innerHTML = _getDisplayHtml(_this.currentTxt, _this.inptxt).html;
+            refreshFullDisplayHtml(_this.currentTxt, _this.inptxt);
             _this.einpdisplay.innerHTML = _getInpHtml(_this.inptxt);
             _this.efulltext.innerHTML = _this.txt;
             _this.einp.focus();
@@ -642,7 +677,8 @@ var TY = {
                 _this.pKeys[c].KeyTimes++;
             }
             // 刷新显示
-            _this.etxt.innerHTML = _getDisplayHtml(_this.currentTxt, _this.inptxt).html;
+            //_this.etxt.innerHTML = _getDisplayHtml(_this.currentTxt, _this.inptxt).html;
+            refreshFullDisplayHtml(_this.currentTxt, _this.inptxt);
             _this.einpdisplay.innerHTML = _getInpHtml(_this.inptxt);
             _this.StateBoard.updateBigWith(_this.lastpData);
             _this.updateTip();
@@ -712,11 +748,11 @@ var TY = {
             // 更新段落显示
             if (e.type == "keyup") return;
             _this.pData.KeyStrokes++;
-            var result = _getDisplayHtml(_this.currentTxt, _this.inptxt);
-            _this.etxt.innerHTML = result.html;
+            //var result = _getDisplayHtml(_this.currentTxt, _this.inptxt);
+            //_this.etxt.innerHTML = result.html;
 
             // 完成当前段落,各种刷新
-            if (result.finish) {
+            if (refreshDisplayHtml(_this.currentTxt, _this.inptxt)) {
                 _this.UpdateData();
                 _this.StateBoard.update();
                 _this.RefreshChart();
@@ -814,9 +850,12 @@ var TY = {
         };
         // 获取当前单词
         this.getCurrentWord = function () {
-            let word, txt, i;
+            let word, txt, i, w;
             txt = _this.currentTxt;
+            w = _this.currentWord;
             i = _this.inppos;
+            if (i >= w.begin && i < w.end && txt.substr(w.begin, w.end - w.begin) === w.word)
+                return false;
             if (i < 0 || i >= txt.length || _cType(txt[i]) === "whitespace") word = "";
             else {
                 let l = i, r = i;
@@ -824,9 +863,11 @@ var TY = {
                 for (; r < txt.length && _cType(txt[r]) !== "whitespace"; r++);
                 if (_cType(txt[l]) === "whitespace") l++;
                 word = txt.substr(l, r - l);
+                _this.currentWord.begin = l;
+                _this.currentWord.end = r;
             }
-            let isnewword = _this.currentWord !== word;
-            _this.currentWord = word;
+            let isnewword = _this.currentWord.word !== word;
+            _this.currentWord.word = word;
             return isnewword;
         };
         // 刷新tip和语音
@@ -835,8 +876,8 @@ var TY = {
             if (_this.getCurrentWord()) _this.readWord();
             if (!_this.RT_TipDisplay && _this.RT_MODE !== "English") return;
 
-            let tip = _this.RT_ENGLISHDICTIONARY[_this.RT_ENGDIC][_this.currentWord];
-            if (!tip) tip = _this.currentWord;
+            let tip = _this.RT_ENGLISHDICTIONARY[_this.RT_ENGDIC][_this.currentWord.word];
+            if (!tip) tip = _this.currentWord.word;
             let tipx, tipy;
 
             let currentpos = _this.inppos;
@@ -855,13 +896,13 @@ var TY = {
         this.readWord = function () {
             if (
                 _this.RT_Voice
-                && _this.currentWord !== ''
-                && _cType(_this.currentWord[0]) !== 'symbol'
+                && _this.currentWord.word !== ''
+                && _cType(_this.currentWord.word[0]) !== 'symbol'
             ) {
-                let utterance = new SpeechSynthesisUtterance(_this.currentWord);
+                let utterance = new SpeechSynthesisUtterance(_this.currentWord.word);
                 utterance.voice = speechSynthesis.getVoices()[1];
                 // 根据单词长度适当放慢语速
-                utterance.rate = Math.max(.5, 1 - .1 * Math.floor(_this.currentWord.length / 8));
+                utterance.rate = Math.max(.5, 1 - .1 * Math.floor(_this.currentWord.word.length / 8));
                 speechSynthesis.cancel();
                 speechSynthesis.speak(utterance);
             }
@@ -1155,7 +1196,8 @@ var TY = {
         // 切换当前字符样式
         this.charStyleToggle = function (val) {
             _this.currentcharstyle = val;
-            _this.etxt.innerHTML = _getDisplayHtml(_this.currentTxt, _this.inptxt).html;
+            //_this.etxt.innerHTML = _getDisplayHtml(_this.currentTxt, _this.inptxt).html;
+            refreshFullDisplayHtml(_this.currentTxt, _this.inptxt);
             _this.updateTip();
         };
         // 切换tip显示
@@ -1454,7 +1496,7 @@ var TY = {
             _this.Apply();
         };
 
-        function getCSS () {
+        function getCSS() {
             let css = ehtml("css");
             css = css.contentDocument.documentElement.children[1].children[0].innerHTML;
             css = css.replace(new RegExp('&gt;', 'g'), ">");

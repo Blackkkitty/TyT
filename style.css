@@ -251,6 +251,12 @@ textarea:focus {
     word-break: break-all
 }
 
+#prc_text * {
+    transition: all 200ms ease-in-out !important;
+    -webkit-transition: all 200ms ease-in-out !important;
+    -moz-transition: all 200ms ease-in-out !important
+}
+
 #prc_inp_display {
     display: inline-block;
     height: 2.4em;
@@ -501,7 +507,7 @@ input[type=text] {
     outline: 1px "@text_dark" solid !important
 }
 
-#prc_text .space-0 {
+#prc_text *[isspace=true]:not([class=err-0]) {
     opacity: 0
 }
 
