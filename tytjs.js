@@ -1,7 +1,7 @@
 /**
  * Tytjs By BLACKKITTY 2018.02.25
  */
-var ehtml = (id) => { return document.getElementById(id); };
+var $ = (id) => { return document.getElementById(id); };
 var TY = {
     Prc: function () {
         var _this = this;
@@ -18,15 +18,15 @@ var TY = {
         var STR_currention = "Miss Character Correction";
 
         /************** 绑定元素 ***************/
-        this.etxt = ehtml("prc_text");
-        this.einp = ehtml("prc_inp");
-        this.einpdisplay = ehtml("prc_inp_display");
-        this.efulltext = ehtml("fulltext");
-        this.echart = ehtml('chart');
-        this.etstatus = ehtml('tpyestatus');
-        this.etimer = ehtml('timer');
-        this.einfo = ehtml('infoboard');
-        this.etip = ehtml('prc_tip');
+        this.etxt = $("prc_text");
+        this.einp = $("prc_inp");
+        this.einpdisplay = $("prc_inp_display");
+        this.efulltext = $("fulltext");
+        this.echart = $('chart');
+        this.etstatus = $('tpyestatus');
+        this.etimer = $('timer');
+        this.einfo = $('infoboard');
+        this.etip = $('prc_tip');
         this.sounders = new Array();
 
         /************** 设置项 ***************/
@@ -211,7 +211,7 @@ var TY = {
         function StateBoard() {
             var StateBoard = this;
             function _set(id, val) {
-                ehtml(id).innerHTML = val;
+                $(id).innerHTML = val;
             }
             // speed
             this.updateSpeed = function () {
@@ -706,7 +706,7 @@ var TY = {
         };
         // 设置文本源
         this.setTextSource = function (eid) {
-            _this.txt = ehtml(eid).value;
+            _this.txt = $(eid).value;
             _this.txt = _this.txt.replace(new RegExp('\t', 'g'), " ");
             _this.txt = _this.txt.replace(new RegExp('\n', 'g'), " ");
             _this.txtGroups = _this.groupingText(_this.txt);
@@ -781,7 +781,7 @@ var TY = {
         // 更新错误榜
         this.UpdateMissRank = function (filter = "all") {
             _this.missrankfilter = filter;
-            var erank = ehtml("prc_missrank");
+            var erank = $("prc_missrank");
             var l = [];
             var html = "";
             for (let i in _this.Data.keys) {
@@ -1253,9 +1253,9 @@ var TY = {
         };
         // 初始化
         this.Init = function () {
-            let n = ehtml("sounders").childElementCount;
+            let n = $("sounders").childElementCount;
             for (let i = 0; i < n; i++) {
-                _this.sounders.push(ehtml("sounder" + i));
+                _this.sounders.push($("sounder" + i));
             }
             _this.sounderInx = 0;
             _this.einp.addEventListener("keydown", _this.soundPlay);
@@ -1471,7 +1471,7 @@ var TY = {
             c: "rgba(0,0,0,0.1)"
         };
         this.getCharColors = function () { return _this.charColor; };
-        this.estyle = ehtml('style');
+        this.estyle = $('style');
 
         this.Apply = function () {
             let shtml = StyleTemplate;
@@ -1497,7 +1497,7 @@ var TY = {
         };
 
         function getCSS() {
-            let css = ehtml("css");
+            let css = $("css");
             css = css.contentDocument.documentElement.children[1].children[0].innerHTML;
             css = css.replace(new RegExp('&gt;', 'g'), ">");
             return css;
@@ -1511,10 +1511,10 @@ var TY = {
     Folder: function (self, eid) {
         if (self.innerHTML == "+") {
             self.innerHTML = "-";
-            ehtml(eid).hidden = false;
+            $(eid).hidden = false;
         } else {
             self.innerHTML = "+";
-            ehtml(eid).hidden = true;
+            $(eid).hidden = true;
         }
     },
     Chooser: function (self, fn) {
@@ -1527,7 +1527,7 @@ var TY = {
         }
     },
     Ranger: function (self, eid, fn) {
-        ehtml(eid).innerHTML = self.value;
+        $(eid).innerHTML = self.value;
         fn(self.value);
     }
 };
