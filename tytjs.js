@@ -1457,6 +1457,7 @@ var TY = {
         function getCSS () {
             let css = ehtml("css");
             css = css.contentDocument.documentElement.children[1].children[0].innerHTML;
+            css = css.replace(new RegExp('&gt;', 'g'), ">");
             return css;
         };
 
