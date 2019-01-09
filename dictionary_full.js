@@ -1,4 +1,4 @@
-var ENGLISHDICTIONARY_FULL = {
+var ENGLISHDICTIONARY_DETAIL = {
 "abandon":"n.放纵 vt.放弃/遗弃/沉溺",
 "abbreviation":"n.缩写",
 "ability":"n.才能/能力",

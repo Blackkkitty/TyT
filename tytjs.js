@@ -13,6 +13,8 @@ var TY = {
         var ENTERKEY = '↩';         // 回车显示
         var ROWMAXLEN = 56;         // 单行最大长度
         var ROWS = 2;               // 行数
+        var BOOL_ON = "[✔]";
+        var BOOL_OFF = "[✘]";
         var STR_clicktotype = 'Click to Type';
         var STR_practise = "Typing Practise";
         var STR_currention = "Miss Character Correction";
@@ -46,7 +48,7 @@ var TY = {
         this.missrankfilter = "all";        // 错误榜显示类型：all letter number symbol
         this.speedunit = "cpm";             // 当前速度显示单位：cpm wpm
         this.RT_MODE = 'English';           // 当前模式：English Pinyin Made-up Custom
-        this.RT_ENGDIC = 'simple';          // 当前词典类型：simple full
+        this.RT_ENGDIC = 'brief';           // 当前词典类型：brief detail
 
         /*------- 布尔值 -------*/
         this.RT_RandomFirstUpper = false;   // 随机首字母大写
@@ -64,8 +66,8 @@ var TY = {
         this.RT_PINYINLIST = ["✘ERROR"];        // 拼音列表
         this.RT_ENGLISHWORDLIST = ["✘ERROR"];   // 英文单词列表
         this.RT_ENGLISHDICTIONARY = {           // 英文单词词典
-            simple: ["✘ERROR"],                 /* 简化 */
-            full: ["✘ERROR"]                    /* 完整释义 */
+            brief: ["✘ERROR"],                 /* 简化 */
+            detail: ["✘ERROR"]                    /* 完整释义 */
         };
 
         /************** 内部使用数据 ***************/
@@ -353,7 +355,7 @@ var TY = {
             return false;
         }
         // 快速刷新prc_inp
-        function refreshInpHtml(inp, pos) { 
+        function refreshInpHtml(inp, pos) {
         }
         // 获取prc_inp的html格式字符串
         function _getInpHtml(inp, pos) {
@@ -1184,9 +1186,9 @@ var TY = {
         this.soundToggle = function (e) {
             _this.RT_TypeSound = !_this.RT_TypeSound;
             if (_this.RT_TypeSound) {
-                e.innerHTML = "Typing-Sound[ON]";
+                e.innerHTML = BOOL_ON + "Typing-Sound";
             } else {
-                e.innerHTML = "Typing-Sound[OFF]";
+                e.innerHTML = BOOL_OFF + "Typing-Sound";
             }
             if (_this.RT_TypeSound) _this.soundPlay();
         };
@@ -1214,24 +1216,24 @@ var TY = {
             if (_this.RT_TipDisplay) {
                 _this.RT_TipDisplay = false;
                 _this.etip.hidden = "hidden";
-                e.innerHTML = "Tip";
+                e.innerHTML = BOOL_OFF + "Tip";
             } else {
                 _this.RT_TipDisplay = true;
                 _this.etip.hidden = "";
-                e.innerHTML = "TIP";
+                e.innerHTML = BOOL_ON + "Tip";
                 _this.updateTip();
             }
         };
         // 切换英文词典
         this.dicToggle = function (e) {
-            if (_this.RT_ENGDIC === "simple") {
-                _this.RT_ENGDIC = "full";
-                _this.etip.className = "tip_dic_full";
-                e.innerHTML = "Full";
-            } else if (_this.RT_ENGDIC === "full") {
-                _this.RT_ENGDIC = "simple";
-                _this.etip.className = "tip_dic_simple";
-                e.innerHTML = "Simple";
+            if (_this.RT_ENGDIC === "brief") {
+                _this.RT_ENGDIC = "detail";
+                _this.etip.className = "tip_dic_detail";
+                e.innerHTML = "Detail";
+            } else if (_this.RT_ENGDIC === "detail") {
+                _this.RT_ENGDIC = "brief";
+                _this.etip.className = "tip_dic_brief";
+                e.innerHTML = "Brief";
             }
             _this.updateTip();
         };
@@ -1239,9 +1241,9 @@ var TY = {
         this.voiceToggle = function (e) {
             _this.RT_Voice = !_this.RT_Voice;
             if (_this.RT_Voice) {
-                e.innerHTML = "VOICE";
+                e.innerHTML = BOOL_ON + "Voice";
             } else {
-                e.innerHTML = "Voice";
+                e.innerHTML = BOOL_OFF + "Voice";
             }
             _this.readWord();
         };
@@ -1249,7 +1251,7 @@ var TY = {
         this.crosswordToggle = function (e) {
             _this.RT_Crossword = !_this.RT_Crossword;
             _this.charStyleToggle(_this.charstyle);
-            e.innerHTML = _this.RT_Crossword ? "CROSSWORD" : "Crossword";
+            e.innerHTML = _this.RT_Crossword ? BOOL_ON + "Crossword" : BOOL_OFF + "Crossword";
         };
 
         // refresher
@@ -1282,7 +1284,7 @@ var TY = {
             }, false);
             _this.refresher = setInterval(_this.Refresher, _this.refreshertimeinterval);
         };
-        
+
     },
     WordAssembler: function (additionalWordsList) {
         var unit = {
@@ -1402,7 +1404,7 @@ var TY = {
     Style: function () {
         var _this = this;
         var stylesheet = {
-            night: {
+            Calm: {
                 background: "#222",
                 background_dark: "#171717",
                 background_2dark: "#111",
@@ -1413,7 +1415,7 @@ var TY = {
                 text_2dark: "#ddd",
                 error: "red"
             },
-            day: {
+            Mousse: {
                 background: "rgb(240,235,215)",
                 background_dark: "rgb(230,225,205)",
                 background_2dark: "rgb(220,215,195)",
@@ -1424,7 +1426,7 @@ var TY = {
                 text_2dark: "#131313",
                 error: "red"
             },
-            phaedra: {
+            Phaedra: {
                 background: "#009C82",
                 background_dark: "#00826D",
                 background_2dark: "#006655",
@@ -1435,7 +1437,7 @@ var TY = {
                 text_2dark: "#FFFF9D",
                 error: "#FF6138"
             },
-            vintage: {
+            Vintage: {
                 background: "#C77966",
                 background_dark: "#965C4D",
                 background_2dark: "#73463B",
@@ -1446,7 +1448,7 @@ var TY = {
                 text_2dark: "#F7DFB3",
                 error: "red"
             },
-            virtualdriver: {
+            Tear: {
                 background: "#000",
                 background_dark: "#111",
                 background_2dark: "#222",
@@ -1457,7 +1459,7 @@ var TY = {
                 text_2dark: "#80FA01",
                 error: "white"
             },
-            midnight: {
+            Midnight: {
                 background: "#000",
                 background_dark: "#060606",
                 background_2dark: "#131313",
@@ -1499,8 +1501,9 @@ var TY = {
             _this.charColor.b = style.text;
         };
 
-        this.Switch = function () {
-            _this.current = _this.current + 1 == _this.stylenames.length ? 0 : _this.current + 1;
+        this.Switch = function (e) {
+            _this.current = _this.current + 1 === _this.stylenames.length ? 0 : _this.current + 1;
+            e.innerHTML = "Theme[" + _this.stylenames[_this.current] + "]";
             _this.Apply();
         };
 
@@ -1543,8 +1546,8 @@ var Prc = new TY.Prc();
 var Style = new TY.Style();
 window.onload = function () {
     Prc.RT_ENGLISHWORDLIST = ENGLISHWORDLIST;
-    Prc.RT_ENGLISHDICTIONARY.full = ENGLISHDICTIONARY_FULL;
-    Prc.RT_ENGLISHDICTIONARY.simple = ENGLISHDICTIONARY_SIMPLE;
+    Prc.RT_ENGLISHDICTIONARY.detail = ENGLISHDICTIONARY_DETAIL;
+    Prc.RT_ENGLISHDICTIONARY.brief = ENGLISHDICTIONARY_BRIEF;
     Prc.RT_PINYINLIST = PINYINLIST;
     Style.Init();
     setTimeout(() => {

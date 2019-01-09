@@ -239,7 +239,7 @@ textarea:focus {
     overflow: visible
 }
 
-#prc_state{
+#prc_state {
     padding-top: 2em;
 }
 
@@ -383,7 +383,8 @@ textarea:focus {
     margin-top: 20px;
     width: 1050px;
     height: 200px;
-    border: 0
+    border: 0;
+    cursor: crosshair;
 }
 
 #info {
@@ -411,7 +412,7 @@ textarea:focus {
 }
 
 input[type=range].mini {
-    width: 6em
+    width: 10em
 }
 
 input[type=range] {
@@ -643,13 +644,13 @@ input[type=text] {
     z-index: 9999
 }
 
-.tip_dic_full {
+.tip_dic_detail {
     font-size: 1.3em !important;
     max-width: 10em;
     min-width: 6em
 }
 
-.tip_dic_simple {
+.tip_dic_brief {
     font-size: 2em !important;
     max-width: 8em;
     min-width: 4em
@@ -661,7 +662,7 @@ input[type=text] {
     -moz-transition: all 200ms !important
 }
 
-.overv{
+.overv {
     overflow: visible;
 }
 

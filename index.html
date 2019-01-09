@@ -93,10 +93,10 @@
                     &nbsp;<span class="clk small" onclick="Prc.Pause()">Pause</span> &nbsp;<span class="clk small"
                         onclick="Prc.newText()">New-Text</span>
                     &nbsp;<span class="clk small" onclick="Prc.ClearData()">Clear-Data</span> &nbsp;<span class="clk small"
-                        onclick="Style.Switch();Prc.RefreshChart();">Theme</span> &nbsp;<span class="clk small" onclick="Prc.voiceToggle(this);">Voice</span>
-                    &nbsp;<span class="clk small" onclick="Prc.tipToggle(this);">Tip</span>(<span class="clk small"
-                        onclick="Prc.dicToggle(this);">Simple</span>)&nbsp;<span class="clk small" onclick="Prc.crosswordToggle(this);">Crossword</span>
-                    &nbsp;<span class="clk small" onclick="Prc.soundToggle(this);">Typing-Sound[ON]</span></div>
+                        onclick="Style.Switch(this);Prc.RefreshChart();">Theme[Calm]</span> &nbsp;<span class="clk small" onclick="Prc.voiceToggle(this);">[✘]Voice</span>
+                    &nbsp;<span class="clk small" onclick="Prc.tipToggle(this);">[✘]Tip</span>.<span class="clk small"
+                        onclick="Prc.dicToggle(this);">Brief</span> &nbsp;<span class="clk small" onclick="Prc.crosswordToggle(this);">[✘]Crossword</span>
+                    &nbsp;<span class="clk small" onclick="Prc.soundToggle(this);">[✔]Typing-Sound</span></div>
             </div>
             <div id="state_details" class="row prc-state bd-l bd-r bd-u" hidden>
                 <div class="col-6 smallrow">
@@ -167,26 +167,26 @@
                 <div class="col-12"><span>[<span class="clk" onclick="TY.Folder(this,'chartbox')">+</span>]Chart:</span>
                     <div id="chartbox" class="text-center" hidden><canvas id="chart" width="1050" height="200"></canvas>
                         <div class="row">
-                            <div class="col-2 text-right"> Item:</div>
-                            <div class="col-10 text-left"><span>[</span><span onclick="Prc.SetChart('Speed')" class="clk">Speed(cpm)</span><span>|</span><span
+                            <div class="col-3 text-right"> Item:</div>
+                            <div class="col-8 text-left"><span>[</span><span onclick="Prc.SetChart('Speed')" class="clk">Speed(cpm)</span><span>|</span><span
                                     onclick="Prc.SetChart('Accuracy')" class="clk">Accuracy(%)</span><span>|</span><span
                                     onclick="Prc.SetChart('Spents')" class="clk">Spents(ms)</span><span>|</span><span
                                     onclick="Prc.SetChart('BackspaceStrokes')" class="clk">BackspaceStrokes</span><span>|</span><span
                                     onclick="Prc.SetChart('KeyStrokes')" class="clk">KeyStrokes</span><span>]</span></div>
                         </div>
                         <div class="row">
-                            <div class="col-2 text-right"><span>Smoothness:</span></div>
-                            <div class="col-10 text-left"><input type="range" min="0" max="1" step="0.001" defaultValu="0.05"
+                            <div class="col-3 text-right"><span>Smoothness:</span></div>
+                            <div class="col-8 text-left"><input type="range" min="0" max="1" step="0.001" defaultValu="0.05"
                                     value="0.05" oninput="Prc.SetChart(null,this.value)"></div>
                         </div>
                         <div class="row">
-                            <div class="col-2 text-right"><span>Select:</span></div>
-                            <div class="col-10 text-left"><input type="range" min="0" max="1" step="0.001" defaultValu="1"
+                            <div class="col-3 text-right"><span>Select:</span></div>
+                            <div class="col-8 text-left"><input type="range" min="0" max="1" step="0.001" defaultValu="1"
                                     value="1" oninput="Prc.SetChart(null,null,this.value)"></div>
                         </div>
                         <div class="row">
-                            <div class="col-2 text-right"><span>Offset:</span></div>
-                            <div class="col-10 text-left"><input type="range" min="0" max="1" step="0.001" defaultValu="1"
+                            <div class="col-3 text-right"><span>Offset:</span></div>
+                            <div class="col-8 text-left"><input type="range" min="0" max="1" step="0.001" defaultValu="1"
                                     value="1" oninput="Prc.SetChart(null,null,null,this.value)"></div>
                         </div>
                     </div>

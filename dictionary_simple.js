@@ -1,4 +1,4 @@
-var ENGLISHDICTIONARY_SIMPLE = {"abandon":"放弃",
+var ENGLISHDICTIONARY_BRIEF = {"abandon":"放弃",
 "abbreviation":"缩写",
 "ability":"能力",
 "able":"能够",
