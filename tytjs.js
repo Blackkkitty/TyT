@@ -24,7 +24,6 @@ var TY = {
         this.efulltext = $("fulltext");
         this.echart = $('chart');
         this.etstatus = $('tpyestatus');
-        this.etimer = $('timer');
         this.einfo = $('infoboard');
         this.etip = $('prc_tip');
         this.sounders = new Array();
@@ -324,6 +323,7 @@ var TY = {
             let now = inp.length, style = _this.charstyle;
             if (_this.RT_Crossword) style = 0;
             function refresh(inx, state) {
+                if (inx < 0 || inx >= _this.etxt.childElementCount) return;
                 let e = _this.etxt.children[inx];
                 let cinp = inp.charAt(inx), ctxt = txt.charAt(inx);
                 if (inx >= now) cinp = ctxt;
@@ -348,8 +348,8 @@ var TY = {
                 }
             }
             refresh(now, "now");
-            if (now > 0) refresh(now - 1, "past");
-            if (now + 1 < _this.etxt.childElementCount) refresh(now + 1, "normal");
+            refresh(now - 1, "past");
+            refresh(now + 1, "normal");
             return false;
         }
         // 快速刷新prc_inp
@@ -626,6 +626,7 @@ var TY = {
             _this.state = "running";
             _this.StateBoard.updateProgress();
             _this.currentTxt = _this.txtGroups[_this.currentGroup];
+            _this.einp.maxLength = _this.currentTxt.length;
             _this.einp.value = "";
             _this.inptxt = "";
             _this.inppos = 0;
