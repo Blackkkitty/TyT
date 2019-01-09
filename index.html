@@ -91,7 +91,7 @@
                 <div id="prc_op" class="row prc-state">
                     <div class="col-12"><span>[<span class="clk" onclick="TY.Folder(this,'state_details')">+</span>]Operation</span>
                         &nbsp;<span class="clk small" onclick="Prc.Pause()">Pause</span> &nbsp;<span class="clk small"
-                            onclick="Prc.RT_Currenting = !Prc.RT_Currenting;Prc.setRandomTextSource()">New-Text</span>
+                            onclick="Prc.newText()">New-Text</span>
                         &nbsp;<span class="clk small" onclick="Prc.ClearData()">Clear-Data</span> &nbsp;<span class="clk small"
                             onclick="Style.Switch();Prc.RefreshChart();">Theme</span> &nbsp;<span class="clk small" onclick="Prc.voiceToggle(this);">Voice</span> &nbsp;<span class="clk small"
                             onclick="Prc.tipToggle(this);">Tip</span>(<span class="clk small" onclick="Prc.dicToggle(this);">Simple</span>)&nbsp;<span class="clk small" onclick="Prc.crosswordToggle(this);">Crossword</span> &nbsp;<span class="clk small" onclick="Prc.soundToggle(this);">Typing-Sound[ON]</span></div>
@@ -108,7 +108,7 @@
                                 oninput="TY.Ranger(this,'wordsrangeval',function(val){Prc.RT_Length=val;})"> &nbsp;<span
                                 id="wordsrangeval">200</span></div>
                         <div class="row" id="info_style" onmouseover="Prc.info(this)"><span>Style(<span class="clk"
-                                    onclick="stylerange.value=0;stylerange.oninput()">Default</span>):</span> &nbsp;<input
+                                    onclick="stylerange.value=1;stylerange.oninput()">Default</span>):</span> &nbsp;<input
                                 id="stylerange" type="range" min="1" max="6" step="1" value="1" oninput="TY.Ranger(this,'stylerangeval',Prc.charStyleToggle)"
                                 class="mini"> &nbsp;<span id="stylerangeval">1</span></div>
                         <div class="row" id="info_currention" onmouseover="Prc.info(this)"><span>Currention(<span class="clk"

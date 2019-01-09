@@ -37,7 +37,7 @@ var TY = {
         this.chartselect = 1;               // 图表 显示范围 select
         this.chartoffset = 1;               // 图表 显示范围偏移量 offset
         this.missranknum = 10;              // 错误榜显示条数
-        this.currentcharstyle = 1;          // 当前字符样式序号 =0时为填字模式
+        this.charstyle = 1;                 // 当前字符样式序号 =0时为填字模式
         this.RT_Currention = 0;             // 纠错占比
         this.SpecialWordLength = 0;         // 特殊模式中生成的单词最小长度
 
@@ -180,7 +180,7 @@ var TY = {
                 __this.Spents = Date.now() - timer;
                 let finishedtext = 0;
                 for (let i = 0; i < __this.TextLength && i < _this.inptxt.length; i++) {
-                    if (_this.currentTxt.charAt(i) == _this.inptxt.charAt(i)) {
+                    if (_this.currentTxt.charAt(i) === _this.inptxt.charAt(i)) {
                         finishedtext++;
                     }
                 }
@@ -287,7 +287,7 @@ var TY = {
             };
         };
 
-        /************** 数据处理方法 ***************/
+        /************** 数据处理 ***************/
         // 完整刷新prc_text
         function refreshFullDisplayHtml(txt, inp) {
             let html = "";
@@ -298,7 +298,7 @@ var TY = {
                     errs[i] = true;
                 }
             }
-            let style = _this.currentcharstyle;
+            let style = _this.charstyle;
             if (_this.RT_Crossword) style = 0;
             for (let i = 0; i < txt.length; i++) {
                 let classname = "normal-" + style;
@@ -318,38 +318,42 @@ var TY = {
             }
             _this.etxt.innerHTML = html;
         }
-        // 快速刷新prc_text
+        // 快速刷新prc_text (v 4.0)
         function refreshDisplayHtml(txt, inp) {
-            let v = _this.etxt, now = inp.length;
-            let style = _this.currentcharstyle;
-            let n = v.childElementCount;
             if (inp === txt) return true;
+            let now = inp.length, style = _this.charstyle;
             if (_this.RT_Crossword) style = 0;
-            function refresh(k, pos) {
-                let ci = inp.charAt(k), cj = txt.charAt(k);
-                v.children[k].className = "";
-                if (k >= now) ci = cj;
-                if (cj === " ") {
-                    v.children[k].innerHTML = SPACEKEY;
-                    if (ci === cj) {
-                        v.children[k].className += pos + "-" + style;
-                    } else {
-                        v.children[k].innerHTML = SPACEKEYVISIBLE;
-                        v.children[k].className += "err-" + style;
-                    }
-                } else {
-                    v.children[k].innerHTML = cj;
-                    if (ci === cj) {
-                        v.children[k].className += pos + "-" + style;
-                    } else {
-                        v.children[k].className += "err-" + style;
-                    }
+            function refresh(inx, state) {
+                let e = _this.etxt.children[inx];
+                let cinp = inp.charAt(inx), ctxt = txt.charAt(inx);
+                if (inx >= now) cinp = ctxt;
+                switch (((ctxt !== " ") << 1) | (cinp !== ctxt)) {
+                    case 0:
+                        e.innerHTML = SPACEKEY;
+                        e.className = state + "-" + style;
+                        break;
+                    case 1:
+                        e.innerHTML = SPACEKEYVISIBLE;
+                        e.className = "err-" + style;
+                        break;
+                    case 2:
+                        e.innerHTML = ctxt;
+                        e.className = state + "-" + style;
+                        break;
+                    case 3:
+                        e.innerHTML = ctxt;
+                        e.className = "err-" + style;
+                        break;
+                    default: break;
                 }
             }
             refresh(now, "now");
             if (now > 0) refresh(now - 1, "past");
-            if (now < n - 1) refresh(now + 1, "normal");
+            if (now < _this.etxt.childElementCount) refresh(now + 1, "normal");
             return false;
+        }
+        // 快速刷新prc_inp
+        function refreshInpHtml(inp, pos) { 
         }
         // 获取prc_inp的html格式字符串
         function _getInpHtml(inp, pos) {
@@ -745,13 +749,9 @@ var TY = {
                 }
             }
 
-            // 更新段落显示
+            // 更新段落显示，若本段完成则刷新
             if (e.type == "keyup") return;
             _this.pData.KeyStrokes++;
-            //var result = _getDisplayHtml(_this.currentTxt, _this.inptxt);
-            //_this.etxt.innerHTML = result.html;
-
-            // 完成当前段落,各种刷新
             if (refreshDisplayHtml(_this.currentTxt, _this.inptxt)) {
                 _this.UpdateData();
                 _this.StateBoard.update();
@@ -884,7 +884,7 @@ var TY = {
             tipy = currentpos >= ROWMAXLEN ? "72%" : "97%";
             currentpos = currentpos % ROWMAXLEN;
             tipx = (currentpos * 100.) / ROWMAXLEN + "%";
-            if (_this.currentcharstyle.toString() === "5" && !_this.RT_Crossword) {
+            if (_this.charstyle.toString() === "5" && !_this.RT_Crossword) {
                 tipx = "0%";
                 tipy = "97%";
             }
@@ -906,6 +906,12 @@ var TY = {
                 speechSynthesis.cancel();
                 speechSynthesis.speak(utterance);
             }
+        };
+        // 重新生成文本
+        this.newText = function () {
+            _this.RT_Currenting = !_this.RT_Currenting;
+            _this.setRandomTextSource();
+            _this.Pause();
         };
 
         /************** 图表 ***************/
@@ -1169,6 +1175,7 @@ var TY = {
             _this.setRandomTextSource();
             _this.StateBoard.update();
             _this.RefreshChart();
+            _this.Pause();
         };
 
         /************** 切换开关 ***************/
@@ -1195,7 +1202,7 @@ var TY = {
         };
         // 切换当前字符样式
         this.charStyleToggle = function (val) {
-            _this.currentcharstyle = val;
+            _this.charstyle = val;
             //_this.etxt.innerHTML = _getDisplayHtml(_this.currentTxt, _this.inptxt).html;
             refreshFullDisplayHtml(_this.currentTxt, _this.inptxt);
             _this.updateTip();
@@ -1240,7 +1247,7 @@ var TY = {
         // 切换拼写模式
         this.crosswordToggle = function (e) {
             _this.RT_Crossword = !_this.RT_Crossword;
-            _this.charStyleToggle(_this.currentcharstyle);
+            _this.charStyleToggle(_this.charstyle);
             e.innerHTML = _this.RT_Crossword ? "CROSSWORD" : "Crossword";
         };
 
@@ -1274,7 +1281,7 @@ var TY = {
             }, false);
             _this.refresher = setInterval(_this.Refresher, _this.refreshertimeinterval);
         };
-        this.Init();
+        
     },
     WordAssembler: function (additionalWordsList) {
         var unit = {
@@ -1541,10 +1548,11 @@ window.onload = function () {
     Style.Init();
     setTimeout(() => {
         Prc.WordAssembler = new TY.WordAssembler(Prc.RT_ENGLISHWORDLIST);
+        Prc.getChartColors = () => { return Style.charColor; };
+        Prc.Init();
+        Prc.RefreshChart();
         if (Prc.LoadData()) Prc.StateBoard.update();
         Prc.setRandomTextSource();
         Prc.Pause();
-        Prc.getChartColors = Style.getCharColors;
-        Prc.RefreshChart();
     }, 1500);
 };
