@@ -53,8 +53,8 @@ footer {
 
 .container {
     width: 100%;
-    max-width: 1140px;
-    padding: 1em;
+    max-width: 1080px;
+    padding: 1em 0;
     margin-right: auto;
     margin-left: auto
 }
@@ -81,6 +81,13 @@ footer {
     padding-top: 2px;
     padding-bottom: 2px;
     overflow: hidden
+}
+
+.row-outer {
+    display: block;
+    position: relative;
+    width: 100%;
+    padding: 0;
 }
 
 .right {
@@ -177,6 +184,10 @@ footer {
     max-width: 100%
 }
 
+.nopadding {
+    padding: 0;
+}
+
 .clk {
     color: "@strong" !important;
     cursor: pointer
@@ -196,7 +207,6 @@ footer {
 input,
 textarea {
     line-height: 1em;
-    border: 1px "@border" solid;
     cursor: pointer
 }
 
@@ -215,7 +225,6 @@ textarea:focus {
 }
 
 #prc {
-    width: 1100px;
     overflow: visible
 }
 
@@ -247,7 +256,7 @@ textarea:focus {
     height: 2.4em;
     width: 100%;
     color: "@text_dark";
-    border-bottom: "@background_dark" 2px dashed;
+    border-bottom: "@border" 1px dashed;
     word-break: break-all
 }
 
@@ -297,12 +306,6 @@ textarea:focus {
     overflow: hidden
 }
 
-.prc-state>div {
-    border-radius: 5px;
-    border-left: 1px "@border" solid;
-    border-right: 1px "@border" solid
-}
-
 .prc-state .large {
     color: "@strong";
     font-size: 3.6em;
@@ -327,7 +330,6 @@ textarea:focus {
 .prc-state .smallrow .row {
     margin: 0;
     font-size: .9em;
-    border-bottom: 1px "@border" solid
 }
 
 .prc-state .smallrow input {
@@ -336,27 +338,18 @@ textarea:focus {
 }
 
 #prc_txtsource {
-    height: 13em;
-    min-height: 13em;
-    max-height: 13em;
+    height: 10.5em;
+    min-height: 10.5em;
+    max-height: 10.5em;
     width: 100%;
     min-width: 100%;
-    max-width: 100%
-}
-
-#prc_miss,
-#prc_state,
-#prc_op,
-#state_details {
-    border-radius: 5px;
-    border-bottom: 1px "@border" solid
-}
-
-#prc_fulltext,
-#prc_chart {
-    border-radius: 5px;
-    border: 1px "@border" solid;
-    border-bottom: 0
+    max-width: 100%;
+    border: none;
+    opacity: .5;
+    cursor: text;
+    user-select: text;
+    -webkit-user-select: text;
+    background-color: "@background_dark";
 }
 
 #fulltext {
@@ -366,8 +359,6 @@ textarea:focus {
     text-decoration-line: underline;
     text-decoration-style: solid;
     color: "@text";
-    border-left: 1px "@border" solid;
-    border-right: 1px "@border" solid;
     word-break: break-all;
     user-select: text;
     -webkit-user-select: text
@@ -633,7 +624,7 @@ input[type=text] {
     font-weight: normal;
     bottom: 100%;
     border: 0;
-    border-radius: 2px;
+    border-radius: 3px;
     z-index: 9999
 }
 
@@ -653,4 +644,36 @@ input[type=text] {
     transition: all 200ms !important;
     -webkit-transition: all 200ms !important;
     -moz-transition: all 200ms !important
+}
+
+/*  border */
+
+.bd-u,
+.bd-d,
+.bd-l,
+.bd-r,
+.bd-a {
+    border-color: "@border";
+    border-style: solid;
+    border-width: 0;
+}
+
+.bd-a {
+    border-width: 1px;
+}
+
+.bd-u {
+    border-top-width: 1px;
+}
+
+.bd-d {
+    border-bottom-width: 1px;
+}
+
+.bd-l {
+    border-left-width: 1px;
+}
+
+.bd-r {
+    border-right-width: 1px;
 }

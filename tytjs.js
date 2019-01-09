@@ -349,7 +349,7 @@ var TY = {
             }
             refresh(now, "now");
             if (now > 0) refresh(now - 1, "past");
-            if (now < _this.etxt.childElementCount) refresh(now + 1, "normal");
+            if (now + 1 < _this.etxt.childElementCount) refresh(now + 1, "normal");
             return false;
         }
         // 快速刷新prc_inp

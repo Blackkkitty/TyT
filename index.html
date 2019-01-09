@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" id="HTML">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -25,169 +26,177 @@
         }
     </style>
 </head>
+
 <body>
-    <div id="loading">Loading...</div> 
+    <div id="loading">Loading...</div>
     <header>
         TyT - Make you type faster.
     </header>
     <br>
     <div class="container">
-        <div id="prc" class="row">
+        <div id="prc" class="row row-outer bd-l bd-r bd-d">
+            <div id="prc_state" class="row prc-state bd-d">
+                <div class="col-2">
+                    <div class="row"><span id="val_speed" class="large">0</span></div>
+                    <div class="row small"><span>Speed</span>(<span id="val_speedunit" class="clk" onclick="Prc.speedToggle(this)"
+                            onmouseover="Prc.info(this)">cpm</span>)</div>
+                    <div class="row small"><span>Avg/Top:</span>&nbsp;<span id="val_avgspeed">0</span>/<span id="val_topspeed">0</span></div>
+                </div>
+                <div class="col-2 bd-l">
+                    <div class="row"><span id="val_backspace" class="large">0</span></div>
+                    <div class="row small"><span>Backspace</span></div>
+                    <div class="row small"><span>Total:</span>&nbsp;<span id="val_allbackspace">0</span></div>
+                </div>
+                <div class="col-2 bd-l">
+                    <div class="row"><span id="val_spents" class="large">0</span></div>
+                    <div class="row small"><span>Spents(sec)</span></div>
+                    <div class="row small"><span>Total:</span>&nbsp;<span id="val_allspents">0min 0s</span></div>
+                </div>
+                <div class="col-2 bd-l">
+                    <div class="row"><span id="val_accuracy" class="large">0</span></div>
+                    <div class="row small"><span>Accuracy(%)</span></div>
+                    <div class="row small"><span>Total:</span>&nbsp;<span id="val_allaccuracy">0</span><span>%</span></div>
+                </div>
+                <div class="col-4 smallrow bd-l">
+                    <div class="row">
+                        <div class="col-6">Mode</div>
+                        <div id="val_mode" class="col-6 text-right">English</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">Key Strucks</div>
+                        <div id="val_keystruck" class="col-6 text-right">0</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">Strucks per Second</div>
+                        <div class="col-6 text-right"><span id="val_struckspeed">0</span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">Finished Text</div>
+                        <div id="val_text" class="col-6 text-right">0</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">Current Progress</div>
+                        <div class="col-6 text-right"><span id="val_progress">0</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="prc_miss" class="row prc-state bd-d" onmouseover="Prc.info(this)">
+                <div class="col-12">
+                    <div><span>Miss[</span><span class="clk small" onclick="Prc.UpdateMissRank('all')">All</span><span>|</span><span
+                            class="clk small" onclick="Prc.UpdateMissRank('letter')">ABC</span><span>|</span><span
+                            class="clk small" onclick="Prc.UpdateMissRank('number')">Num</span><span>|</span><span
+                            class="clk small" onclick="Prc.UpdateMissRank('symbol')">Symbol</span><span>]:</span><span
+                            id="prc_missrank"></span></div>
+                </div>
+            </div>
+            <div id="prc_op" class="row prc-state">
+                <div class="col-12"><span>[<span class="clk" onclick="TY.Folder(this,'state_details')">+</span>]Operations</span>
+                    &nbsp;<span class="clk small" onclick="Prc.Pause()">Pause</span> &nbsp;<span class="clk small"
+                        onclick="Prc.newText()">New-Text</span>
+                    &nbsp;<span class="clk small" onclick="Prc.ClearData()">Clear-Data</span> &nbsp;<span class="clk small"
+                        onclick="Style.Switch();Prc.RefreshChart();">Theme</span> &nbsp;<span class="clk small" onclick="Prc.voiceToggle(this);">Voice</span>
+                    &nbsp;<span class="clk small" onclick="Prc.tipToggle(this);">Tip</span>(<span class="clk small"
+                        onclick="Prc.dicToggle(this);">Simple</span>)&nbsp;<span class="clk small" onclick="Prc.crosswordToggle(this);">Crossword</span>
+                    &nbsp;<span class="clk small" onclick="Prc.soundToggle(this);">Typing-Sound[ON]</span></div>
+            </div>
+            <div id="state_details" class="row prc-state bd-u" hidden>
+                <div class="col-6 smallrow">
+                    <div class="row" id="info_mode" onmouseover="Prc.info(this)"><span><span>Mode:&nbsp;</span><span>[</span><span
+                                onclick="Prc.setTextMode('English')" class="clk">English</span><span>|</span><span
+                                onclick="Prc.setTextMode('Pinyin')" class="clk">Pinyin</span><span>|</span><span
+                                onclick="Prc.setTextMode('Made-up')" class="clk">Made-up</span><span>]</span></span></div>
+                    <div class="row" id="info_words" onmouseover="Prc.info(this)"><span>Words(<span class="clk" onclick="wordsrange.value=200;wordsrange.oninput()">Default</span>):&nbsp;</span><input
+                            id="wordsrange" type="range" class="mini" min="1" max="1000" step="1" value="200" oninput="TY.Ranger(this,'wordsrangeval',function(val){Prc.RT_Length=val;})">
+                        &nbsp;<span id="wordsrangeval">200</span></div>
+                    <div class="row" id="info_style" onmouseover="Prc.info(this)"><span>Style(<span class="clk" onclick="stylerange.value=1;stylerange.oninput()">Default</span>):</span>
+                        &nbsp;<input id="stylerange" type="range" min="1" max="6" step="1" value="1" oninput="TY.Ranger(this,'stylerangeval',Prc.charStyleToggle)"
+                            class="mini"> &nbsp;<span id="stylerangeval">1</span></div>
+                    <div class="row" id="info_currention" onmouseover="Prc.info(this)"><span>Currention(<span class="clk"
+                                onclick="missrange.value=0;missrange.oninput()">Default</span>):&nbsp;</span><input id="missrange"
+                            type="range" class="mini" min="0" max="200" step="1" value="0" oninput="TY.Ranger(this,'missrangeval',function(val){Prc.RT_Currention=val/100;})">
+                        &nbsp;<span id="missrangeval">0</span><span>%</span></div>
+                    <div class="row" id="info_enginclude" onmouseover="Prc.info(this)"><span>English Include:&nbsp;</span><span
+                            class="clk checkbox" onclick="TY.Chooser(this,function(e){Prc.RT_RandomNumber = e;})">☐</span><span>Number&nbsp;</span><span
+                            class="clk checkbox" onclick="TY.Chooser(this,function(e){Prc.RT_RandomSymbol = e;})">☐</span><span>Symbol&nbsp;</span><span
+                            class="clk checkbox" onclick="TY.Chooser(this,function(e){Prc.RT_RandomFirstUpper = e;})">☐</span><span>Capital&nbsp;</span></div>
+                    <div class="row" id="info_madeupmode" onmouseover="Prc.info(this)"><span>Made-up Mode:&nbsp;</span><span>[</span><span
+                            onclick="Prc.setSpecialMode('Normal')" class="clk">Normal</span><span>|</span><span onclick="Prc.setSpecialMode('LeftHand')"
+                            class="clk">LeftHand</span><span>|</span><span onclick="Prc.setSpecialMode('RightHand')"
+                            class="clk">RightHand</span><span>|</span><span onclick="Prc.setSpecialMode('InTurn')"
+                            class="clk">InTurn</span><span>]</span></div>
+                    <div class="row" id="info_madeupminwordlen" onmouseover="Prc.info(this)"><span>Made-up Minimal
+                            Word Length:</span> &nbsp;<input id="specialwordlengthrange" type="range" min="0" max="100"
+                            step="1" value="0" oninput="TY.Ranger(this,'specialwordlengthrangeval',Prc.setSpecialWordLength)"
+                            class="mini"> &nbsp;<span id="specialwordlengthrangeval">0</span></div>
+                    <div class="row" id="info_leftcharset" onmouseover="Prc.info(this)"><span>LeftHand Charset(<span
+                                onclick="prc_lefthandcharset.value='qwertasdfgzxcv';lefthandcharsetsave.onclick()"
+                                class="clk">Default</span>):</span>&nbsp;<input id="prc_lefthandcharset" type="text"
+                            maxlength="50" value="qwertasdfgzxcv" style="width:10em"> &nbsp;<span id="lefthandcharsetsave"
+                            class="clk" onclick="Prc.WordAssembler.setLefthand(prc_lefthandcharset.value)" title="Set this text as lefthand character set,others will be the righthand character set. Leave nothing for default.">Save</span></div>
+                </div>
+                <div class="col-4 smallrow bd-l" id="info_customtext" onmouseover="Prc.info(this)">
+                    <div class="row"><textarea id="prc_txtsource"></textarea>
+                        <div class="col-12 text-center"><span class="clk" onclick="Prc.setTextSource('prc_txtsource')"
+                                title="Set this text as practise text.">Use This Text(auto-cycle)</span></div>
+                    </div>
+                </div>
+                <div class="col-2 smallrow bd-l" id="info" onmouseover="Prc.info(this)">
+                    <div class="row text-right">
+                        <div class="col-12 text-center bd-d"> Information</div>
+                    </div>
+                    <div id="infoboard">
+                        <center>TyT<br><br>Make you type faster<br><br>By BLACKKITTY</center>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
             <div class="col-12">
-                <div id="prc_state" class="row prc-state">
-                    <div class="col-2">
-                        <div class="row"><span id="val_speed" class="large">0</span></div>
-                        <div class="row small"><span>Speed</span>(<span id="val_speedunit" class="clk" onclick="Prc.speedToggle(this)"
-                                onmouseover="Prc.info(this)">cpm</span>)</div>
-                        <div class="row small"><span>Avg/Top:</span>&nbsp;<span id="val_avgspeed">0</span>/<span id="val_topspeed">0</span></div>
-                    </div>
-                    <div class="col-2">
-                        <div class="row"><span id="val_backspace" class="large">0</span></div>
-                        <div class="row small"><span>Backspace</span></div>
-                        <div class="row small"><span>Total:</span>&nbsp;<span id="val_allbackspace">0</span></div>
-                    </div>
-                    <div class="col-2">
-                        <div class="row"><span id="val_spents" class="large">0</span></div>
-                        <div class="row small"><span>Spents(sec)</span></div>
-                        <div class="row small"><span>Total:</span>&nbsp;<span id="val_allspents">0min 0s</span></div>
-                    </div>
-                    <div class="col-2">
-                        <div class="row"><span id="val_accuracy" class="large">0</span></div>
-                        <div class="row small"><span>Accuracy(%)</span></div>
-                        <div class="row small"><span>Total:</span>&nbsp;<span id="val_allaccuracy">0</span><span>%</span></div>
-                    </div>
-                    <div class="col-4 smallrow">
-                        <div class="row">
-                            <div class="col-6">Mode</div>
-                            <div id="val_mode" class="col-6 text-right">English</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-6">Key Strucks</div>
-                            <div id="val_keystruck" class="col-6 text-right">0</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-6">Strucks per Second</div>
-                            <div class="col-6 text-right"><span id="val_struckspeed">0</span></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-6">Finished Text</div>
-                            <div id="val_text" class="col-6 text-right">0</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-6">Current Progress</div>
-                            <div class="col-6 text-right"><span id="val_progress">0</span></div>
-                        </div>
-                    </div>
-                </div>
-                <div id="prc_miss" class="row prc-state" onmouseover="Prc.info(this)">
-                    <div class="col-12">
-                        <div><span>Miss[</span><span class="clk small" onclick="Prc.UpdateMissRank('all')">All</span><span>|</span><span
-                                class="clk small" onclick="Prc.UpdateMissRank('letter')">ABC</span><span>|</span><span
-                                class="clk small" onclick="Prc.UpdateMissRank('number')">Num</span><span>|</span><span
-                                class="clk small" onclick="Prc.UpdateMissRank('symbol')">Symbol</span><span>]:</span><span
-                                id="prc_missrank"></span></div>
-                    </div>
-                </div>
-                <div id="prc_op" class="row prc-state">
-                    <div class="col-12"><span>[<span class="clk" onclick="TY.Folder(this,'state_details')">+</span>]Operation</span>
-                        &nbsp;<span class="clk small" onclick="Prc.Pause()">Pause</span> &nbsp;<span class="clk small"
-                            onclick="Prc.newText()">New-Text</span>
-                        &nbsp;<span class="clk small" onclick="Prc.ClearData()">Clear-Data</span> &nbsp;<span class="clk small"
-                            onclick="Style.Switch();Prc.RefreshChart();">Theme</span> &nbsp;<span class="clk small" onclick="Prc.voiceToggle(this);">Voice</span> &nbsp;<span class="clk small"
-                            onclick="Prc.tipToggle(this);">Tip</span>(<span class="clk small" onclick="Prc.dicToggle(this);">Simple</span>)&nbsp;<span class="clk small" onclick="Prc.crosswordToggle(this);">Crossword</span> &nbsp;<span class="clk small" onclick="Prc.soundToggle(this);">Typing-Sound[ON]</span></div>
-                </div>
-                <div id="state_details" class="row prc-state" hidden>
-                    <div class="col-6 smallrow">
-                        <div class="row" id="info_mode" onmouseover="Prc.info(this)"><span><span>Mode:&nbsp;</span><span>[</span><span
-                                    onclick="Prc.setTextMode('English')" class="clk">English</span><span>|</span><span
-                                    onclick="Prc.setTextMode('Pinyin')" class="clk">Pinyin</span><span>|</span><span
-                                    onclick="Prc.setTextMode('Made-up')" class="clk">Made-up</span><span>]</span></span></div>
-                        <div class="row" id="info_words" onmouseover="Prc.info(this)"><span>Words(<span class="clk"
-                                    onclick="wordsrange.value=200;wordsrange.oninput()">Default</span>):&nbsp;</span><input
-                                id="wordsrange" type="range" class="mini" min="1" max="1000" step="1" value="200"
-                                oninput="TY.Ranger(this,'wordsrangeval',function(val){Prc.RT_Length=val;})"> &nbsp;<span
-                                id="wordsrangeval">200</span></div>
-                        <div class="row" id="info_style" onmouseover="Prc.info(this)"><span>Style(<span class="clk"
-                                    onclick="stylerange.value=1;stylerange.oninput()">Default</span>):</span> &nbsp;<input
-                                id="stylerange" type="range" min="1" max="6" step="1" value="1" oninput="TY.Ranger(this,'stylerangeval',Prc.charStyleToggle)"
-                                class="mini"> &nbsp;<span id="stylerangeval">1</span></div>
-                        <div class="row" id="info_currention" onmouseover="Prc.info(this)"><span>Currention(<span class="clk"
-                                    onclick="missrange.value=0;missrange.oninput()">Default</span>):&nbsp;</span><input
-                                id="missrange" type="range" class="mini" min="0" max="200" step="1" value="0" oninput="TY.Ranger(this,'missrangeval',function(val){Prc.RT_Currention=val/100;})">
-                            &nbsp;<span id="missrangeval">0</span><span>%</span></div>
-                        <div class="row" id="info_enginclude" onmouseover="Prc.info(this)"><span>English Include:&nbsp;</span><span
-                                class="clk checkbox" onclick="TY.Chooser(this,function(e){Prc.RT_RandomNumber = e;})">☐</span><span>Number&nbsp;</span><span
-                                class="clk checkbox" onclick="TY.Chooser(this,function(e){Prc.RT_RandomSymbol = e;})">☐</span><span>Symbol&nbsp;</span><span
-                                class="clk checkbox" onclick="TY.Chooser(this,function(e){Prc.RT_RandomFirstUpper = e;})">☐</span><span>Capital&nbsp;</span></div>
-                        <div class="row" id="info_madeupmode" onmouseover="Prc.info(this)"><span>Made-up Mode:&nbsp;</span><span>[</span><span
-                                onclick="Prc.setSpecialMode('Normal')" class="clk">Normal</span><span>|</span><span
-                                onclick="Prc.setSpecialMode('LeftHand')" class="clk">LeftHand</span><span>|</span><span
-                                onclick="Prc.setSpecialMode('RightHand')" class="clk">RightHand</span><span>|</span><span
-                                onclick="Prc.setSpecialMode('InTurn')" class="clk">InTurn</span><span>]</span></div>
-                        <div class="row" id="info_madeupminwordlen" onmouseover="Prc.info(this)"><span>Made-up Minimal
-                                Word Length:</span> &nbsp;<input id="specialwordlengthrange" type="range" min="0" max="100"
-                                step="1" value="0" oninput="TY.Ranger(this,'specialwordlengthrangeval',Prc.setSpecialWordLength)"
-                                class="mini"> &nbsp;<span id="specialwordlengthrangeval">0</span></div>
-                        <div class="row" id="info_leftcharset" onmouseover="Prc.info(this)"><span>LeftHand Charset(<span
-                                    onclick="prc_lefthandcharset.value='qwertasdfgzxcv';lefthandcharsetsave.onclick()"
-                                    class="clk">Default</span>):</span>&nbsp;<input id="prc_lefthandcharset" type="text"
-                                maxlength="50" value="qwertasdfgzxcv" style="width:10em"> &nbsp;<span id="lefthandcharsetsave"
-                                class="clk" onclick="Prc.WordAssembler.setLefthand(prc_lefthandcharset.value)" title="Set this text as lefthand character set,others will be the righthand character set. Leave nothing for default.">Save</span></div>
-                    </div>
-                    <div class="col-4 smallrow" id="info_customtext" onmouseover="Prc.info(this)">
-                        <div class="row"><textarea id="prc_txtsource"></textarea>
-                            <div class="col-12 text-center"><span class="clk" onclick="Prc.setTextSource('prc_txtsource')"
-                                    title="Set this text as practise text.">Use This Text(auto-cycle)</span></div>
-                        </div>
-                    </div>
-                    <div class="col-2 smallrow" id="info" onmouseover="Prc.info(this)">
-                        <div class="row text-right">
-                            <div class="col-12 text-center"> Information</div>
-                        </div>
-                        <div id="infoboard">
-                            <center>TyT<br><br>Make you type faster<br><br>By BLACKKITTY</center>
-                        </div>
-                    </div>
-                </div><br><span id="tpyestatus" class="small">...</span><span class="small" hidden>Timer:<span id="timer"></span>&nbsp;</span>
+                <br>
+                <span id="tpyestatus" class="small">...</span><span class="small" hidden>Timer:<span id="timer"></span>&nbsp;</span>
                 <div id="prc_main" class="row">
                     <div id="prc_tip" class="tip_dic_simple" hidden="hidden"></div>
                     <div id="prc_text"></div>
                     <div id="prc_inp_display"></div>
                     <div id="prc_inp_hider"><textarea id="prc_inp" rows="2" cols="58"></textarea></div>
-                </div><br>
-                <div id="prc_chart" class="row prc-state">
-                    <div class="col-12"><span>[<span class="clk" onclick="TY.Folder(this,'chartbox')">-</span>]Chart:</span>
-                        <div id="chartbox" class="text-center"><canvas id="chart" width="1050" height="200"></canvas>
-                            <div class="row">
-                                <div class="col-2 text-right"> Item:</div>
-                                <div class="col-10 text-left"><span>[</span><span onclick="Prc.SetChart('Speed')" class="clk">Speed(cpm)</span><span>|</span><span
-                                        onclick="Prc.SetChart('Accuracy')" class="clk">Accuracy(%)</span><span>|</span><span
-                                        onclick="Prc.SetChart('Spents')" class="clk">Spents(ms)</span><span>|</span><span
-                                        onclick="Prc.SetChart('BackspaceStrokes')" class="clk">BackspaceStrokes</span><span>|</span><span
-                                        onclick="Prc.SetChart('KeyStrokes')" class="clk">KeyStrokes</span><span>]</span></div>
-                            </div>
-                            <div class="row">
-                                <div class="col-2 text-right"><span>Smoothness:</span></div>
-                                <div class="col-10 text-left"><input type="range" min="0" max="1" step="0.001"
-                                        defaultValu="0.05" value="0.05" oninput="Prc.SetChart(null,this.value)"></div>
-                            </div>
-                            <div class="row">
-                                <div class="col-2 text-right"><span>Select:</span></div>
-                                <div class="col-10 text-left"><input type="range" min="0" max="1" step="0.001"
-                                        defaultValu="1" value="1" oninput="Prc.SetChart(null,null,this.value)"></div>
-                            </div>
-                            <div class="row">
-                                <div class="col-2 text-right"><span>Offset:</span></div>
-                                <div class="col-10 text-left"><input type="range" min="0" max="1" step="0.001"
-                                        defaultValu="1" value="1" oninput="Prc.SetChart(null,null,null,this.value)"></div>
-                            </div>
+                </div>
+                <br>
+            </div>
+        </div>
+        <div class="row row-outer bd-u bd-l bd-r">
+            <div id="prc_chart" class="row prc-state">
+                <div class="col-12"><span>[<span class="clk" onclick="TY.Folder(this,'chartbox')">+</span>]Chart:</span>
+                    <div id="chartbox" class="text-center" hidden><canvas id="chart" width="1050" height="200"></canvas>
+                        <div class="row">
+                            <div class="col-2 text-right"> Item:</div>
+                            <div class="col-10 text-left"><span>[</span><span onclick="Prc.SetChart('Speed')" class="clk">Speed(cpm)</span><span>|</span><span
+                                    onclick="Prc.SetChart('Accuracy')" class="clk">Accuracy(%)</span><span>|</span><span
+                                    onclick="Prc.SetChart('Spents')" class="clk">Spents(ms)</span><span>|</span><span
+                                    onclick="Prc.SetChart('BackspaceStrokes')" class="clk">BackspaceStrokes</span><span>|</span><span
+                                    onclick="Prc.SetChart('KeyStrokes')" class="clk">KeyStrokes</span><span>]</span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2 text-right"><span>Smoothness:</span></div>
+                            <div class="col-10 text-left"><input type="range" min="0" max="1" step="0.001" defaultValu="0.05"
+                                    value="0.05" oninput="Prc.SetChart(null,this.value)"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2 text-right"><span>Select:</span></div>
+                            <div class="col-10 text-left"><input type="range" min="0" max="1" step="0.001" defaultValu="1"
+                                    value="1" oninput="Prc.SetChart(null,null,this.value)"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2 text-right"><span>Offset:</span></div>
+                            <div class="col-10 text-left"><input type="range" min="0" max="1" step="0.001" defaultValu="1"
+                                    value="1" oninput="Prc.SetChart(null,null,null,this.value)"></div>
                         </div>
                     </div>
                 </div>
-                <div id="prc_fulltext" class="row prc-state">
-                    <div class="col-12"><span>[<span class="clk" onclick="TY.Folder(this,'fulltext')">+</span>]FullText:</span></div>
-                    <div id="fulltext" class="col-12" hidden></div>
-                </div>
+            </div>
+            <div id="prc_fulltext" class="row prc-state bd-u">
+                <div class="col-12"><span>[<span class="clk" onclick="TY.Folder(this,'fulltext')">+</span>]FullText:</span></div>
+                <div id="fulltext" class="col-12" hidden></div>
             </div>
         </div>
     </div>
@@ -216,4 +225,5 @@
 <script src="./dictionary_full.js"></script>
 <script src="./dictionary_simple.js"></script>
 <script src="./tytjs.js"></script>
+
 </html>
