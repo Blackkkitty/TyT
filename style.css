@@ -338,9 +338,9 @@ textarea:focus {
 }
 
 #prc_txtsource {
-    height: 10.5em;
-    min-height: 10.5em;
-    max-height: 10.5em;
+    height: 168px;
+    min-height: 168px;
+    max-height: 168px;
     width: 100%;
     min-width: 100%;
     max-width: 100%;
