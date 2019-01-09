@@ -32,32 +32,31 @@
     <header>
         TyT - Make you type faster.
     </header>
-    <br>
     <div class="container">
-        <div id="prc" class="row row-outer bd-l bd-r bd-d">
-            <div id="prc_state" class="row prc-state bd-d">
+        <div id="prc" class="row row-outer bd-d">
+            <div id="prc_state" class="row prc-state bd-l bd-r bd-d bd-gradient-u">
                 <div class="col-2">
                     <div class="row"><span id="val_speed" class="large">0</span></div>
                     <div class="row small"><span>Speed</span>(<span id="val_speedunit" class="clk" onclick="Prc.speedToggle(this)"
                             onmouseover="Prc.info(this)">cpm</span>)</div>
                     <div class="row small"><span>Avg/Top:</span>&nbsp;<span id="val_avgspeed">0</span>/<span id="val_topspeed">0</span></div>
                 </div>
-                <div class="col-2 bd-l">
+                <div class="col-2 bd-l bd-gradient-u">
                     <div class="row"><span id="val_backspace" class="large">0</span></div>
                     <div class="row small"><span>Backspace</span></div>
                     <div class="row small"><span>Total:</span>&nbsp;<span id="val_allbackspace">0</span></div>
                 </div>
-                <div class="col-2 bd-l">
+                <div class="col-2 bd-l bd-gradient-u">
                     <div class="row"><span id="val_spents" class="large">0</span></div>
                     <div class="row small"><span>Spents(sec)</span></div>
                     <div class="row small"><span>Total:</span>&nbsp;<span id="val_allspents">0min 0s</span></div>
                 </div>
-                <div class="col-2 bd-l">
+                <div class="col-2 bd-l bd-gradient-u">
                     <div class="row"><span id="val_accuracy" class="large">0</span></div>
                     <div class="row small"><span>Accuracy(%)</span></div>
                     <div class="row small"><span>Total:</span>&nbsp;<span id="val_allaccuracy">0</span><span>%</span></div>
                 </div>
-                <div class="col-4 smallrow bd-l">
+                <div class="col-4 smallrow bd-l bd-gradient-u">
                     <div class="row">
                         <div class="col-6">Mode</div>
                         <div id="val_mode" class="col-6 text-right">English</div>
@@ -80,7 +79,7 @@
                     </div>
                 </div>
             </div>
-            <div id="prc_miss" class="row prc-state bd-d" onmouseover="Prc.info(this)">
+            <div id="prc_miss" class="row prc-state bd-l bd-r bd-d" onmouseover="Prc.info(this)">
                 <div class="col-12">
                     <div><span>Miss[</span><span class="clk small" onclick="Prc.UpdateMissRank('all')">All</span><span>|</span><span
                             class="clk small" onclick="Prc.UpdateMissRank('letter')">ABC</span><span>|</span><span
@@ -89,7 +88,7 @@
                             id="prc_missrank"></span></div>
                 </div>
             </div>
-            <div id="prc_op" class="row prc-state">
+            <div id="prc_op" class="row prc-state bd-l bd-r">
                 <div class="col-12"><span>[<span class="clk" onclick="TY.Folder(this,'state_details')">+</span>]Operations</span>
                     &nbsp;<span class="clk small" onclick="Prc.Pause()">Pause</span> &nbsp;<span class="clk small"
                         onclick="Prc.newText()">New-Text</span>
@@ -99,7 +98,7 @@
                         onclick="Prc.dicToggle(this);">Simple</span>)&nbsp;<span class="clk small" onclick="Prc.crosswordToggle(this);">Crossword</span>
                     &nbsp;<span class="clk small" onclick="Prc.soundToggle(this);">Typing-Sound[ON]</span></div>
             </div>
-            <div id="state_details" class="row prc-state bd-u" hidden>
+            <div id="state_details" class="row prc-state bd-l bd-r bd-u" hidden>
                 <div class="col-6 smallrow">
                     <div class="row" id="info_mode" onmouseover="Prc.info(this)"><span><span>Mode:&nbsp;</span><span>[</span><span
                                 onclick="Prc.setTextMode('English')" class="clk">English</span><span>|</span><span
@@ -149,7 +148,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
         <div class="row">
             <div class="row-outer">
@@ -198,6 +196,9 @@
                 <div class="col-12"><span>[<span class="clk" onclick="TY.Folder(this,'fulltext')">+</span>]FullText:</span></div>
                 <div id="fulltext" class="col-12" hidden></div>
             </div>
+        </div>
+        <div class="row row-outer bd-l bd-r bd-gradient-d">
+            <br><br>
         </div>
     </div>
     <div id="sounders" hidden="hidden">
