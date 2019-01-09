@@ -661,6 +661,10 @@ input[type=text] {
     -moz-transition: all 200ms !important
 }
 
+.overv{
+    overflow: visible;
+}
+
 /*  border */
 
 .bd-u,
