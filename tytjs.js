@@ -759,6 +759,7 @@ var TY = {
             if (refreshDisplayHtml(_this.currentTxt, _this.inptxt)) {
                 _this.UpdateData();
                 _this.StateBoard.update();
+                _this.chartbezier = null;   // 重新计算bezier
                 _this.RefreshChart();
                 _this.SaveData();
                 _this.setCurrentText();
