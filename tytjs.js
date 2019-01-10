@@ -34,7 +34,7 @@ var TY = {
         /*------- 数字值 -------*/
         this.sounderInx = 0;                // 当前音效发声器序号
         this.RT_Length = 200;               // 生成文本包含单词数量
-        this.chartzoom = 0.05;              // 图表 平滑度 zoom
+        this.chartsmoothness = 1000;         // 图表平滑度 1~1000
         this.chartselect = 1;               // 图表 显示范围 select
         this.chartoffset = 1;               // 图表 显示范围偏移量 offset
         this.missranknum = 10;              // 错误榜显示条数
@@ -55,12 +55,13 @@ var TY = {
         this.RT_RandomSymbol = false;       // 随机标点字符
         this.RT_RandomNumber = false;       // 随机数字
         this.RT_TipDisplay = false;         // 显示tip
-        this.RT_TypeSound = true;           // 打字音效
+        this.RT_TypeSound = false;           // 打字音效
         this.RT_Voice = false;              // 语音合成
         this.RT_Crossword = false;          // 拼写模式
         this.RT_Currenting = false;         // 纠错：true:打字数据会加入记录，使用正常文本  false:打字数据会不会加入记录，使用错误榜生成的文本            
 
         /*------- 对象值 -------*/
+        this.chartbezier = null;                // 图表贝塞尔曲线
         this.WordAssembler = null;              // 单词生成器
         this.getChartColors = null;             // 获取图表色彩
         this.RT_PINYINLIST = ["✘ERROR"];        // 拼音列表
@@ -944,8 +945,6 @@ var TY = {
             ctx.lineJoin = 'round';
 
             var sourcedata = new Array();
-            var zoomdata = new Array();
-            var alldata = new Array();
             var markeddata = null;
 
             var pos = {
@@ -974,6 +973,11 @@ var TY = {
                 },
                 v: function (p) {
                     return { x: pos.vx(p.x), y: pos.vy(p.y) };
+                },
+                ps: function (a) {
+                    let ret = new Array();
+                    for (let v of a) ret.push(pos.p(v));
+                    return ret;
                 }
             };
 
@@ -1000,10 +1004,11 @@ var TY = {
                 }
             };
 
-            function dot(point, radius) {
+            function dot(point, radius, color) {
                 if (!radius) var radius = 2;
+                if (!color) color = ctx.strokeStyle;
                 var t = ctx.fillStyle;
-                ctx.fillStyle = ctx.strokeStyle;
+                ctx.fillStyle = color;
                 ctx.beginPath();
                 ctx.arc(point.x, point.y, radius, 0, 2 * Math.PI, true);
                 ctx.fill();
@@ -1017,48 +1022,61 @@ var TY = {
                 ctx.stroke();
             }
 
+            function getMultiBezier(data) {
+                let steps = _this.chartsmoothness;
+                let step = 1. / steps;
+                let z = new Array();
+                if (!data || data.length < 1) return z;
+                function _mov(pa, pb, prc) {
+                    pa.x += (pb.x - pa.x) * 1. * prc;
+                    pa.y += (pb.y - pa.y) * 1. * prc;
+                    return pa;
+                }
+                function _bz(ds, prc) {
+                    if (ds.length === 1)
+                        return ds[0];
+                    let a = [];
+                    for (let i = 1; i < ds.length; i++)
+                        a.push(_mov(ds[i - 1], ds[i], prc));
+                    return _bz(a, prc);
+                }
+                for (let i = 0; i <= 1; i += step) {
+                    let p = _bz(data, i);
+                    z.push({ x: p.x, y: p.y });
+                }
+                z.push(data[0]);
+                return z;
+            }
+
+            function DotsDraw(data, color) {
+                if (!data || data.length < 1) return;
+                if (!color) color = ctx.strokeStyle;
+                for (let v of data)
+                    dot(v, 2, color);
+            }
+
             function SmoothDraw(data) {
-                if (data.length < 1) return;
-                dot(pos.p(data[0]));
+                if (!data || data.length < 1) return;
                 for (let i = 1; i < data.length; i++) {
-                    let v = pos.p(data[i]), w = pos.p(data[i - 1]);
+                    let v = data[i], w = data[i - 1];
                     let cx = (v.x + w.x) / 2.;
                     ctx.beginPath();
                     ctx.moveTo(w.x, w.y);
                     ctx.bezierCurveTo(cx, w.y, cx, v.y, v.x, v.y);
                     ctx.stroke();
-                    dot(v);
                 }
             }
 
             function LineDraw(data) {
+                if (!data || data.length < 1) return;
                 let last = null;
                 for (let val of data) {
-                    let t = pos.p(val);
-                    dot(t);
                     ctx.beginPath();
                     if (last != null) ctx.moveTo(last.x, last.y);
-                    ctx.lineTo(t.x, t.y);
+                    ctx.lineTo(val.x, val.y);
                     ctx.stroke();
-                    last = t;
+                    last = val;
                 }
-            }
-
-            function zooming(data, zoom) {
-                var ret = new Array();
-                zoom = Math.floor(data.length * zoom);
-                if (zoom == 0) zoom = 1;
-                for (let i = 0; i <= data.length - zoom; i++) {
-                    let x = 0, y = 0;
-                    for (let j = i; j - i < zoom; j++) {
-                        x += data[j].x;
-                        y += data[j].y;
-                    }
-                    y /= zoom;
-                    x = i * ((data.length - 1) / (data.length - zoom));
-                    ret.push({ x: x, y: y });
-                }
-                return ret;
             }
 
             function locate(place) {
@@ -1075,7 +1093,7 @@ var TY = {
                 function mark(p) {
                     let radius = 30;
                     let mindis = Infinity;
-                    for (let q of alldata) {
+                    for (let q of sourcedata) {
                         let d = Math.hypot(p.x - pos.px(q.x), p.y - pos.py(q.y));
                         if (d < radius && d < mindis) {
                             mindis = d;
@@ -1101,8 +1119,6 @@ var TY = {
                 vmin = Math.min(vmin, _this.Data.datas[i][_this.chartitem]);
                 sourcedata.push({ x: i - begin, y: _this.Data.datas[i][_this.chartitem] });
             }
-            zoomdata = zooming(sourcedata, _this.chartzoom);
-            alldata = zoomdata.concat(sourcedata);
 
             ctx.clearRect(0, 0, width, height);
             // 画坐标轴
@@ -1137,16 +1153,21 @@ var TY = {
             // text item
             let t = _this.chartitem;
             t += "[" + begin + "," + end + "]";
-            t += ", " + Math.floor(_this.chartzoom * 10000) / 100 + "%";
             text.printAtX(text.textAtX + " " + t);
 
             // cursor locate
             if (place) locate(place);
 
+            let ps_sourcedata = pos.ps(sourcedata);
             ctx.strokeStyle = fbcolor;
-            SmoothDraw(sourcedata);
+            SmoothDraw(ps_sourcedata);
+            DotsDraw(ps_sourcedata, facolor);
             ctx.strokeStyle = facolor;
-            LineDraw(zoomdata);
+            if (_this.chartbezier === null || _this.chartbezier.length < 1) {
+                _this.chartbezier = getMultiBezier(ps_sourcedata);
+            }
+            ctx.lineWidth = 2;
+            LineDraw(_this.chartbezier);
 
             if (markeddata) {
                 ctx.strokeStyle = facolor;
@@ -1157,9 +1178,10 @@ var TY = {
             }
         };
         // 设置图表
-        this.SetChart = function (item, zoom, select, offset) {
+        this.SetChart = function (item, smoothness, select, offset) {
+            _this.chartbezier = null;
             if (item != null) _this.chartitem = item;
-            if (zoom != null) _this.chartzoom = zoom;
+            if (smoothness != null) _this.chartsmoothness = smoothness;
             if (select != null) _this.chartselect = select;
             if (offset != null) _this.chartoffset = offset;
             _this.RefreshChart();
