@@ -968,6 +968,12 @@ var TY = {
                 },
                 vy: function (y) {
                     return (y - pos.y.min) / (pos.y.max - pos.y.min) * (vmax - vmin) + vmin;
+                },
+                p: function (v) {
+                    return { x: pos.px(v.x), y: pos.py(v.y) };
+                },
+                v: function (p) {
+                    return { x: pos.vx(p.x), y: pos.vy(p.y) };
                 }
             };
 
@@ -1011,19 +1017,30 @@ var TY = {
                 ctx.stroke();
             }
 
-            function draw(data) {
+            function SmoothDraw(data) {
+                if (data.length < 1) return;
+                dot(pos.p(data[0]));
+                for (let i = 1; i < data.length; i++) {
+                    let v = pos.p(data[i]), w = pos.p(data[i - 1]);
+                    let cx = (v.x + w.x) / 2.;
+                    ctx.beginPath();
+                    ctx.moveTo(w.x, w.y);
+                    ctx.bezierCurveTo(cx, w.y, cx, v.y, v.x, v.y);
+                    ctx.stroke();
+                    dot(v);
+                }
+            }
+
+            function LineDraw(data) {
                 let last = null;
-                let z = new Array();
                 for (let val of data) {
-                    let x = pos.px(val.x);
-                    let y = pos.py(val.y);
-                    dot({ x: x, y: y });
-                    z.push();
+                    let t = pos.p(val);
+                    dot(t);
                     ctx.beginPath();
                     if (last != null) ctx.moveTo(last.x, last.y);
-                    ctx.lineTo(x, y);
+                    ctx.lineTo(t.x, t.y);
                     ctx.stroke();
-                    last = { x: x, y: y };
+                    last = t;
                 }
             }
 
@@ -1062,7 +1079,7 @@ var TY = {
                         let d = Math.hypot(p.x - pos.px(q.x), p.y - pos.py(q.y));
                         if (d < radius && d < mindis) {
                             mindis = d;
-                            markeddata = { x: pos.px(q.x), y: pos.py(q.y) };
+                            markeddata = pos.p(q);
                         }
                     }
                 }
@@ -1127,9 +1144,9 @@ var TY = {
             if (place) locate(place);
 
             ctx.strokeStyle = fbcolor;
-            draw(sourcedata);
+            SmoothDraw(sourcedata);
             ctx.strokeStyle = facolor;
-            draw(zoomdata);
+            LineDraw(zoomdata);
 
             if (markeddata) {
                 ctx.strokeStyle = facolor;
