@@ -1034,8 +1034,9 @@ var TY = {
                         a.push(_mov(ds[i - 1], ds[i], prc));
                     return _bz(a, prc);
                 }
-                data[0].y = pos.py(avg);
-                end.y = pos.py(avg);
+                let _avg = pos.py(avg);
+                data[0].y = (_avg + data[0].y)/2.;
+                end.y = (_avg + end.y) / 2.;
                 for (let i = 0; i <= 1; i += step) {
                     let p = _bz(data, i);
                     if (Math.abs(p.x - end.x) < .001 && Math.abs(p.y - end.y) < .001)
@@ -1082,7 +1083,7 @@ var TY = {
                     ctx.strokeStyle = facolor;
                     ctx.beginPath();
                     ctx.moveTo(0, p.y);
-                    ctx.lineTo(width , p.y);
+                    ctx.lineTo(width, p.y);
                     ctx.moveTo(p.x, pos.y.min);
                     ctx.lineTo(p.x, pos.y.max);
                     ctx.stroke();
@@ -1247,7 +1248,7 @@ var TY = {
             }
         };
         // 切换英文词典
-        this.dicToggle = (e)=> {
+        this.dicToggle = (e) => {
             if (_this.RT_ENGDIC === "brief") {
                 _this.RT_ENGDIC = "detail";
                 _this.etip.className = "tip_dic_detail";
@@ -1260,7 +1261,7 @@ var TY = {
             _this.updateTip();
         };
         // 开关语音合成
-        this.voiceToggle = (e)=> {
+        this.voiceToggle = (e) => {
             _this.RT_Voice = !_this.RT_Voice;
             if (_this.RT_Voice) {
                 e.innerHTML = BOOL_ON + "Voice";
@@ -1270,7 +1271,7 @@ var TY = {
             _this.readWord();
         };
         // 切换拼写模式
-        this.crosswordToggle = (e)=> {
+        this.crosswordToggle = (e) => {
             _this.RT_Crossword = !_this.RT_Crossword;
             _this.charStyleToggle(_this.charstyle);
             e.innerHTML = _this.RT_Crossword ? BOOL_ON + "Crossword" : BOOL_OFF + "Crossword";
@@ -1305,7 +1306,7 @@ var TY = {
                 e.innerHTML = BOOL_ON + "Capital";
             }
         };
-        
+
         // refresher
         this.Refresher = function () {
             if (_this.timer > 0) {
