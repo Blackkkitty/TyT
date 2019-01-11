@@ -1571,8 +1571,8 @@ window.onload = function () {
         Prc.WordAssembler = new TY.WordAssembler(Prc.RT_ENGLISHWORDLIST);
         Prc.getChartColors = () => { return Style.getCharColors(); };
         Prc.Init();
-        Prc.RefreshChart();
         if (Prc.LoadData()) Prc.StateBoard.update();
+        Prc.RefreshChart();
         Prc.setRandomTextSource();
         Prc.Pause();
     }, 1500);
