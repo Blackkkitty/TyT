@@ -14,7 +14,7 @@ var TY = {
         var ROWMAXLEN = 56;         // 单行最大长度
         var ROWS = 2;               // 行数
         var BOOL_ON = "[✔]";
-        var BOOL_OFF = "[✘]";
+        var BOOL_OFF = "[✖]";
         var STR_clicktotype = 'Click to Type';
         var STR_practise = "Typing Practise";
         var STR_currention = "Miss Character Correction";
@@ -54,7 +54,7 @@ var TY = {
         this.RT_RandomSymbol = false;       // 随机标点字符
         this.RT_RandomNumber = false;       // 随机数字
         this.RT_TipDisplay = false;         // 显示tip
-        this.RT_TypeSound = false;           // 打字音效
+        this.RT_TypeSound = false;          // 打字音效
         this.RT_Voice = false;              // 语音合成
         this.RT_Crossword = false;          // 拼写模式
         this.RT_Currenting = false;         // 纠错：true:打字数据会加入记录，使用正常文本  false:打字数据会不会加入记录，使用错误榜生成的文本            
@@ -1205,7 +1205,7 @@ var TY = {
 
         /************** 切换开关 ***************/
         // 打字音效开关
-        this.soundToggle = function (e) {
+        this.soundToggle = (e) => {
             _this.RT_TypeSound = !_this.RT_TypeSound;
             if (_this.RT_TypeSound) {
                 e.innerHTML = BOOL_ON + "Typing-Sound";
@@ -1215,7 +1215,7 @@ var TY = {
             if (_this.RT_TypeSound) _this.soundPlay();
         };
         // 切换速度单位
-        this.speedToggle = function (switchbtn) {
+        this.speedToggle = (switchbtn) => {
             if (_this.speedunit == "cpm") {
                 _this.speedunit = "wpm";
 
@@ -1226,14 +1226,14 @@ var TY = {
             _this.StateBoard.updateSpeed();
         };
         // 切换当前字符样式
-        this.charStyleToggle = function (val) {
+        this.charStyleToggle = (val) => {
             _this.charstyle = val;
             //_this.etxt.innerHTML = _getDisplayHtml(_this.currentTxt, _this.inptxt).html;
             refreshFullDisplayHtml(_this.currentTxt, _this.inptxt);
             _this.updateTip();
         };
         // 切换tip显示
-        this.tipToggle = function (e) {
+        this.tipToggle = (e) => {
             if (_this.RT_MODE !== "English") return;
             if (_this.RT_TipDisplay) {
                 _this.RT_TipDisplay = false;
@@ -1247,7 +1247,7 @@ var TY = {
             }
         };
         // 切换英文词典
-        this.dicToggle = function (e) {
+        this.dicToggle = (e)=> {
             if (_this.RT_ENGDIC === "brief") {
                 _this.RT_ENGDIC = "detail";
                 _this.etip.className = "tip_dic_detail";
@@ -1260,7 +1260,7 @@ var TY = {
             _this.updateTip();
         };
         // 开关语音合成
-        this.voiceToggle = function (e) {
+        this.voiceToggle = (e)=> {
             _this.RT_Voice = !_this.RT_Voice;
             if (_this.RT_Voice) {
                 e.innerHTML = BOOL_ON + "Voice";
@@ -1270,12 +1270,42 @@ var TY = {
             _this.readWord();
         };
         // 切换拼写模式
-        this.crosswordToggle = function (e) {
+        this.crosswordToggle = (e)=> {
             _this.RT_Crossword = !_this.RT_Crossword;
             _this.charStyleToggle(_this.charstyle);
             e.innerHTML = _this.RT_Crossword ? BOOL_ON + "Crossword" : BOOL_OFF + "Crossword";
         };
-
+        // 开关随机数字
+        this.randomNumberToggle = (e) => {
+            if (_this.RT_RandomNumber) {
+                _this.RT_RandomNumber = false;
+                e.innerHTML = BOOL_OFF + "Number";
+            } else {
+                _this.RT_RandomNumber = true;
+                e.innerHTML = BOOL_ON + "Number";
+            }
+        };
+        // 开关随机字符
+        this.randomSymbolToggle = (e) => {
+            if (_this.RT_RandomSymbol) {
+                _this.RT_RandomSymbol = false;
+                e.innerHTML = BOOL_OFF + "Symbol";
+            } else {
+                _this.RT_RandomSymbol = true;
+                e.innerHTML = BOOL_ON + "Symbol";
+            }
+        };
+        // 开关随机首字母大写
+        this.randomCaptionToggle = (e) => {
+            if (_this.RT_RandomFirstUpper) {
+                _this.RT_RandomFirstUpper = false;
+                e.innerHTML = BOOL_OFF + "Capital";
+            } else {
+                _this.RT_RandomFirstUpper = true;
+                e.innerHTML = BOOL_ON + "Capital";
+            }
+        };
+        
         // refresher
         this.Refresher = function () {
             if (_this.timer > 0) {
@@ -1543,15 +1573,6 @@ var TY = {
         } else {
             self.innerHTML = "+";
             $(eid).hidden = true;
-        }
-    },
-    Chooser: function (self, fn) {
-        if (self.innerHTML == "☑") {
-            self.innerHTML = "☐";
-            fn(false);
-        } else {
-            self.innerHTML = "☑";
-            fn(true);
         }
     },
     Ranger: function (self, eid, fn) {
