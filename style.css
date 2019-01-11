@@ -384,6 +384,7 @@ textarea:focus {
     width: 1050px;
     height: 200px;
     border: 0;
+    background-color: "@background_dark";
     cursor: none;
 }
 

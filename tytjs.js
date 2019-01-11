@@ -34,7 +34,6 @@ var TY = {
         /*------- 数字值 -------*/
         this.sounderInx = 0;                // 当前音效发声器序号
         this.RT_Length = 200;               // 生成文本包含单词数量
-        this.chartsmoothness = 1000;         // 图表平滑度 1~1000
         this.chartselect = 1;               // 图表 显示范围 select
         this.chartoffset = 1;               // 图表 显示范围偏移量 offset
         this.missranknum = 10;              // 错误榜显示条数
@@ -926,16 +925,15 @@ var TY = {
             var ctx = _this.echart.getContext('2d');
             var width = 1050;
             var height = 200;
-            var rulerwidth = 50;
             var padding = 15;
+            var multiBezierSteps = 2300;
 
-            var facolor = _this.getChartColors().a;
-            var fbcolor = _this.getChartColors().b;
-            var fccolor = _this.getChartColors().c;
+            var facolor = _this.getChartColors().strong;
+            var fbcolor = _this.getChartColors().text;
+            var fccolor = "rgba(0,0,0,.2)";
 
             var vmin = Infinity;
             var vmax = -Infinity;
-            var avg = _this.Data['Avg' + _this.chartitem] || _this.Data[_this.chartitem];
             end--;
             let len = Math.floor((end - begin) * _this.chartselect);
             end -= Math.floor((1 - _this.chartoffset) * (end - len));
@@ -947,10 +945,11 @@ var TY = {
 
             var sourcedata = new Array();
             var markeddata = null;
+            var charttext = "";
 
             var pos = {
                 x: {
-                    min: (rulerwidth + padding),
+                    min: (0 + padding),
                     max: (width - padding)
                 },
                 y: {
@@ -982,28 +981,13 @@ var TY = {
                 }
             };
 
-            var text = {
-                charwidth: 7.5,
-                textoffsety: 4,
-                basex: rulerwidth,
-                font: "13px monospace",
-                color: facolor,
-                textAtX: "",
-                printAtY: function (str, y) {
-                    str = str.toString();
-                    var x = text.basex - text.charwidth * (1 + str.length);
-                    y += text.textoffsety;
-                    ctx.font = text.font;
-                    ctx.fillStyle = text.color;
-                    ctx.fillText(str, x, y);
-                },
-                printAtX: function (str) {
-                    let Xpos = { x: rulerwidth + 2, y: 11 };
-                    text.textAtX = str;
-                    ctx.clearRect(Xpos.x, 0, width - Xpos.x, Xpos.y);
-                    ctx.fillText(text.textAtX, Xpos.x, Xpos.y);
-                }
-            };
+            function tprint(str) {
+                let Xpos = { x: 0 + 2, y: 11 };
+                ctx.font = "13px monospace";
+                ctx.fillStyle = facolor;
+                ctx.clearRect(Xpos.x, 0, width - Xpos.x, Xpos.y);
+                ctx.fillText(str, Xpos.x, Xpos.y);
+            }
 
             function dot(point, radius, color) {
                 if (!radius) var radius = 2;
@@ -1023,10 +1007,19 @@ var TY = {
                 ctx.stroke();
             }
 
+            function getAvg(data, item) {
+                let sum = 0;
+                for (let v of data) sum += v[item];
+                sum = data.length > 0 ? sum * 1. / data.length : 0;
+                sum = sum.toFixed(1);
+                return sum;
+            }
+
             function getMultiBezier(data) {
-                let steps = _this.chartsmoothness;
+                let steps = multiBezierSteps;
                 let step = 1. / steps;
                 let z = new Array();
+                let end = data[data.length - 1];
                 if (!data || data.length < 1) return z;
                 function _mov(pa, pb, prc) {
                     pa.x += (pb.x - pa.x) * 1. * prc;
@@ -1041,8 +1034,12 @@ var TY = {
                         a.push(_mov(ds[i - 1], ds[i], prc));
                     return _bz(a, prc);
                 }
+                data[0].y = pos.py(avg);
+                end.y = pos.py(avg);
                 for (let i = 0; i <= 1; i += step) {
                     let p = _bz(data, i);
+                    if (Math.abs(p.x - end.x) < .001 && Math.abs(p.y - end.y) < .001)
+                        break;
                     z.push({ x: p.x, y: p.y });
                 }
                 z.push(data[0]);
@@ -1084,9 +1081,9 @@ var TY = {
                 function crossline(p) {
                     ctx.strokeStyle = facolor;
                     ctx.beginPath();
-                    ctx.moveTo(rulerwidth, p.y);
-                    ctx.lineTo(pos.x.max, p.y);
-                    ctx.moveTo(p.x, height);
+                    ctx.moveTo(0, p.y);
+                    ctx.lineTo(width , p.y);
+                    ctx.moveTo(p.x, pos.y.min);
                     ctx.lineTo(p.x, pos.y.max);
                     ctx.stroke();
                 }
@@ -1111,8 +1108,7 @@ var TY = {
                 dot(place, 30);
                 let vx = Math.floor(pos.vx(place.x) + .5);
                 let vy = Math.floor(pos.vy(place.y) * 100) / 100;
-                let str = " Cursor:[" + vx + ", " + vy + "]";
-                text.printAtX(text.textAtX + " " + str);
+                charttext += "  Cursor:[" + vx + ", " + vy + "]";
             }
 
             for (let i = begin; i <= end; i++) {
@@ -1120,42 +1116,29 @@ var TY = {
                 vmin = Math.min(vmin, _this.Data.datas[i][_this.chartitem]);
                 sourcedata.push({ x: i - begin, y: _this.Data.datas[i][_this.chartitem] });
             }
-
+            var avg = getAvg(sourcedata, "y");
             ctx.clearRect(0, 0, width, height);
             // 画坐标轴
             ctx.strokeStyle = fbcolor;
             ctx.beginPath();
-            // y
-            ctx.moveTo(rulerwidth, 0);
-            ctx.lineTo(rulerwidth, height - 1);
             // x
             ctx.lineTo(width, height - 1);
             // min
-            ctx.moveTo(rulerwidth, pos.py(vmin));
+            ctx.moveTo(0, pos.py(vmin));
             ctx.lineTo(width, pos.py(vmin));
             // max
-            ctx.moveTo(rulerwidth, pos.py(vmax));
+            ctx.moveTo(0, pos.py(vmax));
             ctx.lineTo(width, pos.py(vmax));
             // avg
-            if (avg != undefined) {
-                ctx.moveTo(rulerwidth, pos.py(avg));
+            if (avg > 0) {
+                ctx.moveTo(0, pos.py(avg));
                 ctx.lineTo(width, pos.py(avg));
             }
             ctx.stroke();
-            // text min
-            ctx.fillStyle = fbcolor;
-            text.printAtY(vmin, pos.py(vmin));
-            // text max
-            text.printAtY(vmax, pos.py(vmax));
-            // text avg
-            if (avg != undefined) {
-                text.printAtY(avg, pos.py(avg));
-            }
-            // text item
-            let t = _this.chartitem;
-            t += "[" + begin + "," + end + "]";
-            text.printAtX(text.textAtX + " " + t);
-
+            // text avg min max
+            charttext = _this.chartitem;
+            charttext += "[" + begin + ", " + end + "]";
+            charttext += "  Avg:" + avg + " Min:" + vmin + " Max:" + vmax;
             // cursor locate
             if (place) locate(place);
 
@@ -1168,21 +1151,20 @@ var TY = {
                 _this.chartbezier = getMultiBezier(ps_sourcedata);
             }
             ctx.lineWidth = 2;
-            LineDraw(_this.chartbezier);
+            LineDraw(_this.chartbezier, facolor);
 
             if (markeddata) {
                 ctx.strokeStyle = facolor;
                 dot(markeddata);
                 markit(markeddata);
-                let s = "  Marked:[" + Math.floor(pos.vx(markeddata.x) + 0.5) + ", " + Math.floor(pos.vy(markeddata.y) * 100) / 100 + "]";
-                text.printAtX(text.textAtX + s);
+                charttext += "  Marked:[" + Math.floor(pos.vx(markeddata.x) + 0.5) + ", " + Math.floor(pos.vy(markeddata.y) * 100) / 100 + "]";
             }
+            tprint(charttext);
         };
         // 设置图表
-        this.SetChart = function (item, smoothness, select, offset) {
+        this.SetChart = function (item, select, offset) {
             _this.chartbezier = null;
             if (item != null) _this.chartitem = item;
-            if (smoothness != null) _this.chartsmoothness = smoothness;
             if (select != null) _this.chartselect = select;
             if (offset != null) _this.chartoffset = offset;
             _this.RefreshChart();
@@ -1515,12 +1497,9 @@ var TY = {
         this.stylenames = [];
         for (let name in stylesheet) this.stylenames.push(name);
         this.current = 0;
-        this.charColor = {
-            a: "red",
-            b: "#777",
-            c: "rgba(0,0,0,0.1)"
+        this.getCharColors = function () {
+            return stylesheet[_this.stylenames[_this.current]];
         };
-        this.getCharColors = function () { return _this.charColor; };
         this.estyle = $('style');
 
         this.Apply = function () {
@@ -1537,8 +1516,6 @@ var TY = {
             shtml = shtml.replace(new RegExp('"@text"', 'g'), style.text);
             shtml = shtml.replace(new RegExp('"@background"', 'g'), style.background);
             _this.estyle.innerHTML = shtml;
-            _this.charColor.a = style.strong;
-            _this.charColor.b = style.text;
         };
 
         this.Switch = function (e) {
@@ -1592,7 +1569,7 @@ window.onload = function () {
     Style.Init();
     setTimeout(() => {
         Prc.WordAssembler = new TY.WordAssembler(Prc.RT_ENGLISHWORDLIST);
-        Prc.getChartColors = () => { return Style.charColor; };
+        Prc.getChartColors = () => { return Style.getCharColors(); };
         Prc.Init();
         Prc.RefreshChart();
         if (Prc.LoadData()) Prc.StateBoard.update();
