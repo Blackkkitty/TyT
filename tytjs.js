@@ -381,12 +381,12 @@ var TY = {
         }
         // 速度计算 speed = floor( 60 * 1000 * TextLength / Spents)
         function _getSpeed(textlength, spents) {
-            var ret = Math.floor(60000 * textlength / spents);
+            let ret = Math.floor(60000 * textlength / spents);
             return ret == Infinity ? NaN : (ret > FULLSPEED ? FULLSPEED : ret);
         }
         // 正确率计算 Accuracy = FinishedText / KeyStrucks
         function _getAccuracy(FinishedText, KeyStrucks) {
-            var ret = Math.floor(FinishedText / KeyStrucks * 10000) / 100;
+            let ret = Math.floor(FinishedText / KeyStrucks * 10000) / 100;
             return ret == Infinity ? NaN : ret;
         }
         // 误按率计算
@@ -405,7 +405,7 @@ var TY = {
         }
         // 检测字符类型
         function _cType(c) {
-            var code = c.charCodeAt(0);
+            let code = c.charCodeAt(0);
             if (code >= "a".charCodeAt(0) && code <= "z".charCodeAt(0) ||
                 code >= "A".charCodeAt(0) && code <= "Z".charCodeAt(0)
             ) return "letter";
@@ -475,8 +475,8 @@ var TY = {
         };
         // 生成特制单词文本
         this.getRandomSpecialText = function () {
-            var ret = "";
-            var count = _this.RT_Length;
+            let ret = "";
+            let count = _this.RT_Length;
             if (_this.SpecialMode == "InTurn") {
                 let flag = 0;
                 let hands = [];
@@ -515,8 +515,8 @@ var TY = {
         this.getRandomPinyinText = function (wordlist) {
             if (wordlist == undefined) wordlist = _this.RT_PINYINLIST;
             let p = [1, 2, 2, 2, 3, 3, 4];
-            var ret = "";
-            var count = _this.RT_Length;
+            let ret = "";
+            let count = _this.RT_Length;
             while (count--) {
                 let w = "";
                 let t = p[_rand(p.length)];
@@ -530,21 +530,21 @@ var TY = {
         };
         // 生成英语单词文本
         this.getRandomEnglishText = function (wordlist) {
-            if (wordlist == undefined)
-                var wordlist = _this.RT_ENGLISHWORDLIST;
-            var pNormal = .5;
-            var pUpper = .8;
-            var pNum = .9;
-            var pSymbol = 1;
+            if (wordlist === undefined)
+                wordlist = _this.RT_ENGLISHWORDLIST;
+            let pNormal = .5;
+            let pUpper = .8;
+            let pNum = .9;
+            let pSymbol = 1;
             function __num() {
-                var min = 0, max = 10000;
+                let min = 0, max = 10000;
                 return _rand(min, max);
             }
             function __symbol() {
-                var min = 1, max = 4;
-                var sy = "[]{}()<>'\":;,.?/\\|+-=_`~!@#$%^&*";
-                var ret = "";
-                var len = _rand(min, max + 1);
+                let min = 1, max = 4;
+                let sy = "[]{}()<>'\":;,.?/\\|+-=_`~!@#$%^&*";
+                let ret = "";
+                let len = _rand(min, max + 1);
                 while (len--) {
                     ret += sy.charAt(_rand(sy.length));
                 }
@@ -554,11 +554,11 @@ var TY = {
                 return w.charAt(0).toUpperCase() + w.substr(1);
             }
 
-            var ret = "";
-            var count = _this.RT_Length;
+            let ret = "";
+            let count = _this.RT_Length;
             while (count--) {
-                var q = Math.random();
-                var w = wordlist[_rand(wordlist.length)];
+                let q = Math.random();
+                let w = wordlist[_rand(wordlist.length)];
                 w = w.toLowerCase();
                 if (q > pNormal && q < pUpper && _this.RT_RandomFirstUpper) {
                     w = __upper(wordlist[_rand(wordlist.length)]);
@@ -591,7 +591,7 @@ var TY = {
         };
         // 文本分段
         this.groupingText = function (text) {
-            var groups = new Array();
+            let groups = new Array();
             let v = 0, i = 0, j = 0;
             for (; i < text.length;) {
                 // i 移至第一个非空白字符
@@ -922,18 +922,18 @@ var TY = {
         // 刷新图表
         this.RefreshChart = function (place, begin = 0, end = _this.Data.datas.length) {
 
-            var ctx = _this.echart.getContext('2d');
-            var width = 1050;
-            var height = 200;
-            var padding = 15;
-            var multiBezierSteps = 2300;
+            let ctx = _this.echart.getContext('2d');
+            let width = 1050;
+            let height = 200;
+            let padding = 15;
+            let multiBezierSteps = 2300;
 
-            var facolor = _this.getChartColors().strong;
-            var fbcolor = _this.getChartColors().text;
-            var fccolor = "rgba(0,0,0,.2)";
+            let facolor = _this.getChartColors().strong;
+            let fbcolor = _this.getChartColors().text;
+            let fccolor = "rgba(0,0,0,.2)";
 
-            var vmin = Infinity;
-            var vmax = -Infinity;
+            let vmin = Infinity;
+            let vmax = -Infinity;
             end--;
             let len = Math.floor((end - begin) * _this.chartselect);
             end -= Math.floor((1 - _this.chartoffset) * (end - len));
@@ -943,11 +943,11 @@ var TY = {
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
 
-            var sourcedata = new Array();
-            var markeddata = null;
-            var charttext = "";
+            let sourcedata = new Array();
+            let markeddata = null;
+            let charttext = "";
 
-            var pos = {
+            let pos = {
                 x: {
                     min: (0 + padding),
                     max: (width - padding)
@@ -990,9 +990,9 @@ var TY = {
             }
 
             function dot(point, radius, color) {
-                if (!radius) var radius = 2;
+                if (!radius) radius = 2;
                 if (!color) color = ctx.strokeStyle;
-                var t = ctx.fillStyle;
+                let t = ctx.fillStyle;
                 ctx.fillStyle = color;
                 ctx.beginPath();
                 ctx.arc(point.x, point.y, radius, 0, 2 * Math.PI, true);
@@ -1001,7 +1001,7 @@ var TY = {
             }
 
             function markit(point, radius) {
-                if (!radius) var radius = 5;
+                if (!radius) radius = 5;
                 ctx.beginPath();
                 ctx.arc(point.x, point.y, radius, 0, 2 * Math.PI, true);
                 ctx.stroke();
@@ -1116,7 +1116,7 @@ var TY = {
                 vmin = Math.min(vmin, _this.Data.datas[i][_this.chartitem]);
                 sourcedata.push({ x: i - begin, y: _this.Data.datas[i][_this.chartitem] });
             }
-            var avg = getAvg(sourcedata, "y");
+            let avg = getAvg(sourcedata, "y");
             ctx.clearRect(0, 0, width, height);
             // 画坐标轴
             ctx.strokeStyle = fbcolor;
@@ -1171,7 +1171,7 @@ var TY = {
         };
         // 获取鼠标在图表上的位置
         this.getMousePosOnChart = function (evt) {
-            var rect = _this.echart.getBoundingClientRect();
+            let rect = _this.echart.getBoundingClientRect();
             return {
                 x: evt.clientX - rect.left,
                 y: evt.clientY - rect.top
@@ -1181,7 +1181,7 @@ var TY = {
         /************** 数据 ***************/
         // 读取session数据
         this.LoadData = function () {
-            var data = sessionStorage.getItem('Prc');
+            let data = sessionStorage.getItem('Prc');
             if (data != null) {
                 _this.Data = new _Data(JSON.parse(data));
                 return true;
