@@ -1035,8 +1035,11 @@ var TY = {
                     return _bz(a, prc);
                 }
                 let _avg = pos.py(avg);
-                data[0].y = (_avg + data[0].y)/2.;
+                let dt = data[1].x - data[0].x;
+                data[0].y = (_avg + data[0].y) / 2.;
                 end.y = (_avg + end.y) / 2.;
+                data = [{ x: data[0].x - dt, y: _avg }].concat(data);
+                data.push({ x: data[data.length - 1].x + dt, y: _avg });
                 for (let i = 0; i <= 1; i += step) {
                     let p = _bz(data, i);
                     if (Math.abs(p.x - end.x) < .001 && Math.abs(p.y - end.y) < .001)
