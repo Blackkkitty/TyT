@@ -116,9 +116,8 @@
                             type="range" class="mini" min="0" max="200" step="1" value="0" oninput="TY.Ranger(this,'missrangeval',function(val){Prc.RT_Currention=val/100;})">
                         &nbsp;<span id="missrangeval">0</span><span>%</span></div>
                     <div class="row" id="info_enginclude" onmouseover="Prc.info(this)"><span>English Include:&nbsp;</span><span
-                            class="clk" onclick="Prc.randomNumberToggle(this)">[✖]Number</span>&nbsp;<span
-                            class="clk" onclick="Prc.randomSymbolToggle(this)">[✖]Symbol</span>&nbsp;<span
-                            class="clk" onclick="Prc.randomCaptionToggle(this)">[✖]Capital</span>&nbsp;</div>
+                            class="clk" onclick="Prc.randomNumberToggle(this)">[✖]Number</span>&nbsp;<span class="clk"
+                            onclick="Prc.randomSymbolToggle(this)">[✖]Symbol</span>&nbsp;<span class="clk" onclick="Prc.randomCaptionToggle(this)">[✖]Capital</span>&nbsp;</div>
                     <div class="row" id="info_madeupmode" onmouseover="Prc.info(this)"><span>Made-up Mode:&nbsp;</span><span>[</span><span
                             onclick="Prc.setSpecialMode('Normal')" class="clk">Normal</span><span>|</span><span onclick="Prc.setSpecialMode('LeftHand')"
                             class="clk">LeftHand</span><span>|</span><span onclick="Prc.setSpecialMode('RightHand')"
@@ -184,6 +183,11 @@
                             <div class="col-3 text-right"><span>Offset:</span></div>
                             <div class="col-8 text-left"><input type="range" min="0" max="1" step="0.001" defaultValu="1"
                                     value="1" oninput="Prc.SetChart(null,null,this.value)"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-3 text-right"><span>BezierZoom:</span></div>
+                            <div class="col-8 text-left"><input type="range" min="0" max="1" step="0.01" defaultValu="0"
+                                    value="0" oninput="Prc.SetChart(null,null,null,this.value)"></div>
                         </div>
                     </div>
                 </div>

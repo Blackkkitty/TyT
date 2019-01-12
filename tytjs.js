@@ -36,6 +36,7 @@ var TY = {
         this.RT_Length = 200;               // 生成文本包含单词数量
         this.chartselect = 1;               // 图表 显示范围 select
         this.chartoffset = 1;               // 图表 显示范围偏移量 offset
+        this.chartbezierzoom = 0;           // 图表 贝塞尔缩放
         this.missranknum = 10;              // 错误榜显示条数
         this.charstyle = 1;                 // 当前字符样式序号 =0时为填字模式
         this.RT_Currention = 0;             // 纠错占比
@@ -1040,6 +1041,9 @@ var TY = {
                 end.y = (_avg + end.y) / 2.;
                 data = [{ x: data[0].x - dt, y: _avg }].concat(data);
                 data.push({ x: data[data.length - 1].x + dt, y: _avg });
+
+                for (let v of data) v.y += _this.chartbezierzoom * (v.y - _avg);
+
                 for (let i = 0; i <= 1; i += step) {
                     let p = _bz(data, i);
                     if (Math.abs(p.x - end.x) < .001 && Math.abs(p.y - end.y) < .001)
@@ -1166,11 +1170,12 @@ var TY = {
             tprint(charttext);
         };
         // 设置图表
-        this.SetChart = function (item, select, offset) {
+        this.SetChart = function (item, select, offset, bzoom) {
             _this.chartbezier = null;
-            if (item != null) _this.chartitem = item;
-            if (select != null) _this.chartselect = select;
-            if (offset != null) _this.chartoffset = offset;
+            if (item) _this.chartitem = item;
+            if (select) _this.chartselect = select;
+            if (offset) _this.chartoffset = offset;
+            if (bzoom) _this.chartbezierzoom = bzoom;
             _this.RefreshChart();
         };
         // 获取鼠标在图表上的位置
