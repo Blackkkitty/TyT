@@ -37,6 +37,7 @@ var TY = {
         this.chartselect = 1;               // 图表 显示范围 select
         this.chartoffset = 1;               // 图表 显示范围偏移量 offset
         this.chartbezierzoom = 0;           // 图表 贝塞尔缩放
+        this.chartmaxlength = 300;          // 图表 贝塞尔曲线可计算数据最大长度，大于则进行缩放
         this.missranknum = 10;              // 错误榜显示条数
         this.charstyle = 1;                 // 当前字符样式序号 =0时为填字模式
         this.RT_Currention = 0;             // 纠错占比
@@ -919,6 +920,28 @@ var TY = {
             _this.Pause();
         };
 
+        //test
+        // this.test = () => {
+        //     let c = 650;
+        //     _this.Data.datas = [];
+        //     for (let i = 0; i < c; i++) {
+        //         let a = new _PData();
+        //         a = _random(a);
+        //         _this.Data.refresh(a);
+        //     }
+        //     _this.chartbezier = null;
+        //     _this.RefreshChart();
+        //     function _random(a) {
+        //         a.Speed = _rand(200, 400);
+        //         a.Spents = _rand(18000, 30000);
+        //         a.TextLength = _rand(90, 120);
+        //         a.KeyStrokes = _rand(90, 140);
+        //         a.BackspaceStrokes = _rand(0, 30);
+        //         a.Accuracy = _rand(40, 100);
+        //         return a;
+        //     };
+        // };
+
         /************** 图表 ***************/
         // 刷新图表
         this.RefreshChart = function (place, begin = 0, end = _this.Data.datas.length) {
@@ -1016,6 +1039,25 @@ var TY = {
                 return sum;
             }
 
+            function zoom(data, len) {
+                if (data.length <= len) return data;
+                let ret = new Array();
+                let step = data.length * 1. / len;
+                for (let i = 0; i < len; i++) {
+                    let x = 0, y = 0;
+                    let l = Math.floor(i * step);
+                    let r = Math.min(Math.floor((i + 1) * step), data.length);
+                    for (let j = l; j < r; j++) {
+                        x += data[j].x;
+                        y += data[j].y;
+                    }
+                    y = y * 1. / (r - l);
+                    x = x * 1. / (r - l);
+                    ret.push({ x: x, y: y });
+                }
+                return ret;
+            }
+
             function getMultiBezier(data) {
                 let steps = multiBezierSteps;
                 let step = 1. / steps;
@@ -1036,7 +1078,8 @@ var TY = {
                     return _bz(a, prc);
                 }
                 let _avg = pos.py(avg);
-                let dt = data[1].x - data[0].x;
+                let dt = 0;
+                if (data.length > 1) dt = (data.length / 10.) * (data[1].x - data[0].x);
                 data[0].y = (_avg + data[0].y) / 2.;
                 end.y = (_avg + end.y) / 2.;
                 data = [{ x: data[0].x - dt, y: _avg }].concat(data);
@@ -1156,7 +1199,7 @@ var TY = {
             DotsDraw(ps_sourcedata, facolor);
             ctx.strokeStyle = facolor;
             if (_this.chartbezier === null || _this.chartbezier.length < 1) {
-                _this.chartbezier = getMultiBezier(ps_sourcedata);
+                _this.chartbezier = getMultiBezier(zoom(ps_sourcedata, _this.chartmaxlength));
             }
             ctx.lineWidth = 2;
             LineDraw(_this.chartbezier, facolor);
