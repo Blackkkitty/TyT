@@ -11,7 +11,7 @@
 */
 
 #loading {
-    display: none
+    display: none;
 }
 
 body,
@@ -63,12 +63,12 @@ footer {
     display: none !important
 }
 
-a{
+a {
     text-decoration: none;
 }
 
-a:hover *{
-    color:"@strong" !important;
+a:hover * {
+    color: "@strong" !important;
 }
 
 .container {
@@ -361,9 +361,9 @@ textarea:focus {
 }
 
 #prc_txtsource {
-    height: 168px;
-    min-height: 168px;
-    max-height: 168px;
+    height: 213px;
+    min-height: 213px;
+    max-height: 213px;
     width: 100%;
     min-width: 100%;
     max-width: 100%;
@@ -420,7 +420,7 @@ textarea:focus {
 }
 
 input[type=range].mini {
-    width: 10em
+    width: 18em
 }
 
 input[type=range] {

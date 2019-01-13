@@ -34,6 +34,8 @@ var TY = {
         /*------- 数字值 -------*/
         this.sounderInx = 0;                // 当前音效发声器序号
         this.RT_Length = 200;               // 生成文本包含单词数量
+        this.limitaccuracy = 0;             // 限制 正确率
+        this.limitspeed = 0;                // 限制 速度
         this.chartselect = 1;               // 图表 显示范围 select
         this.chartoffset = 1;               // 图表 显示范围偏移量 offset
         this.chartbezierzoom = 0;           // 图表 贝塞尔缩放
@@ -86,7 +88,7 @@ var TY = {
         this.inppos = 0;            // 当前键入位置
         this.timer = 0;             // 计时器
         this.refresher = null;              // refresher
-        this.refreshertimeinterval = 1000;  // refresher时间间隔
+        this.refreshertimeinterval = 400;  // refresher时间间隔
         this.StateBoard = null;
         this.Data = null;
         this.lastpData = null;
@@ -189,6 +191,7 @@ var TY = {
                 }
                 __this.Speed = _getSpeed(finishedtext, __this.Spents);
                 __this.Accuracy = _getAccuracy(finishedtext, __this.KeyStrokes);
+                return __this.Speed >= _this.limitspeed && __this.Accuracy >= _this.limitaccuracy;
             };
         }
         function _Key(Key = null, KeyMisses = 0, KeyTimes = 0, key = undefined) {
@@ -1369,10 +1372,25 @@ var TY = {
             }
         };
 
+        // 设置限制器
+        this.setLimiter = (accuracy, speed,eid) => {
+            if (accuracy){
+                _this.limitaccuracy = accuracy;
+                $(eid).innerHTML = accuracy;
+            } 
+            if (speed){
+                _this.limitspeed = speed;
+                $(eid).innerHTML = speed;
+            } 
+            _this.Pause();
+        };
+
         // refresher
         this.Refresher = function () {
             if (_this.timer > 0) {
-                _this.pData.refreshwhentyping(_this.timer);
+                if (!_this.pData.refreshwhentyping(_this.timer)) {
+                    _this.Pause();
+                };
                 _this.StateBoard.updateBigWith(_this.pData);
             }
         };

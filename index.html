@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" id="HTML">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -8,9 +9,6 @@
     <meta name="description" content="Make you type faster.">
     <meta name="copyright" content="BLACKKITTY">
     <title>TyT - Make you type faster.</title>
-    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Quicksand:500" rel="stylesheet">
-    <iframe id="css" src="style.css" hidden="hidden"></iframe>
     <style id="style">
         *{margin:0;padding:0;background-color:black;}
         #loading{
@@ -24,7 +22,11 @@
             padding: 1em 1em !important;
         }
     </style>
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Quicksand:500" rel="stylesheet">
+    <iframe id="css" src="style.css" hidden="hidden"></iframe>
 </head>
+
 <body>
     <div id="loading">Loading...</div>
     <header></header>
@@ -101,34 +103,56 @@
                     <div class="row" id="info_mode" onmouseout="Prc.info()" onmouseover="Prc.info(this)"><span><span>Mode:&nbsp;</span><span>[</span><span
                                 onclick="Prc.setTextMode('English')" class="clk">English</span><span>|</span><span
                                 onclick="Prc.setTextMode('Pinyin')" class="clk">Pinyin</span><span>|</span><span
-                                onclick="Prc.setTextMode('Made-up')" class="clk">Made-up</span><span>]</span></span></div>
-                    <div class="row" id="info_words" onmouseout="Prc.info()" onmouseover="Prc.info(this)"><span>Words(<span class="clk" onclick="wordsrange.value=200;wordsrange.oninput()">Default</span>):&nbsp;</span><input
+                                onclick="Prc.setTextMode('Made-up')" class="clk">Made-up</span><span>]</span></span>
+                    </div>
+                    <div class="row" id="info_enginclude" onmouseout="Prc.info()" onmouseover="Prc.info(this)"><span>English
+                            Include:&nbsp;</span><span class="clk" onclick="Prc.randomNumberToggle(this)">[✖]Number</span>&nbsp;<span
+                            class="clk" onclick="Prc.randomSymbolToggle(this)">[✖]Symbol</span>&nbsp;<span class="clk"
+                            onclick="Prc.randomCaptionToggle(this)">[✖]Capital</span>
+                    </div>
+                    <div class="row" id="info_words" onmouseout="Prc.info()" onmouseover="Prc.info(this)"><span>Words(<span
+                                class="clk" onclick="wordsrange.value=200;wordsrange.oninput()">Default</span>):&nbsp;</span><input
                             id="wordsrange" type="range" class="mini" min="1" max="1000" step="1" value="200" oninput="TY.Ranger(this,'wordsrangeval',function(val){Prc.RT_Length=val;})">
-                        &nbsp;<span id="wordsrangeval">200</span></div>
-                    <div class="row" id="info_style" onmouseout="Prc.info()" onmouseover="Prc.info(this)"><span>Style(<span class="clk" onclick="stylerange.value=1;stylerange.oninput()">Default</span>):</span>
+                        &nbsp;<span id="wordsrangeval">200</span>
+                    </div>
+                    <div class="row" id="info_style" onmouseout="Prc.info()" onmouseover="Prc.info(this)"><span>Style(<span
+                                class="clk" onclick="stylerange.value=1;stylerange.oninput()">Default</span>):</span>
                         &nbsp;<input id="stylerange" type="range" min="1" max="6" step="1" value="1" oninput="TY.Ranger(this,'stylerangeval',Prc.charStyleToggle)"
-                            class="mini"> &nbsp;<span id="stylerangeval">1</span></div>
-                    <div class="row" id="info_currention" onmouseout="Prc.info()" onmouseover="Prc.info(this)"><span>Currention(<span class="clk"
-                                onclick="missrange.value=0;missrange.oninput()">Default</span>):&nbsp;</span><input id="missrange"
-                            type="range" class="mini" min="0" max="200" step="1" value="0" oninput="TY.Ranger(this,'missrangeval',function(val){Prc.RT_Currention=val/100;})">
-                        &nbsp;<span id="missrangeval">0</span><span>%</span></div>
-                    <div class="row" id="info_enginclude" onmouseout="Prc.info()" onmouseover="Prc.info(this)"><span>English Include:&nbsp;</span><span
-                            class="clk" onclick="Prc.randomNumberToggle(this)">[✖]Number</span>&nbsp;<span class="clk"
-                            onclick="Prc.randomSymbolToggle(this)">[✖]Symbol</span>&nbsp;<span class="clk" onclick="Prc.randomCaptionToggle(this)">[✖]Capital</span>&nbsp;</div>
-                    <div class="row" id="info_madeupmode" onmouseout="Prc.info()" onmouseover="Prc.info(this)"><span>Made-up Mode:&nbsp;</span><span>[</span><span
-                            onclick="Prc.setSpecialMode('Normal')" class="clk">Normal</span><span>|</span><span onclick="Prc.setSpecialMode('LeftHand')"
-                            class="clk">LeftHand</span><span>|</span><span onclick="Prc.setSpecialMode('RightHand')"
-                            class="clk">RightHand</span><span>|</span><span onclick="Prc.setSpecialMode('InTurn')"
-                            class="clk">InTurn</span><span>]</span></div>
-                    <div class="row" id="info_madeupminwordlen" onmouseout="Prc.info()" onmouseover="Prc.info(this)"><span>Made-up Minimal
-                            Word Length:</span> &nbsp;<input id="specialwordlengthrange" type="range" min="0" max="100"
-                            step="1" value="0" oninput="TY.Ranger(this,'specialwordlengthrangeval',Prc.setSpecialWordLength)"
-                            class="mini"> &nbsp;<span id="specialwordlengthrangeval">0</span></div>
-                    <div class="row" id="info_leftcharset" onmouseout="Prc.info()" onmouseover="Prc.info(this)"><span>LeftHand Charset(<span
-                                onclick="prc_lefthandcharset.value='qwertasdfgzxcv';lefthandcharsetsave.onclick()"
+                            class="mini"> &nbsp;<span id="stylerangeval">1</span>
+                    </div>
+                    <div class="row" id="info_currention" onmouseout="Prc.info()" onmouseover="Prc.info(this)"><span>Currention(<span
+                                class="clk" onclick="missrange.value=0;missrange.oninput()">Default</span>):&nbsp;</span><input
+                            id="missrange" type="range" class="mini" min="0" max="200" step="1" value="0" oninput="TY.Ranger(this,'missrangeval',function(val){Prc.RT_Currention=val/100;})">
+                        &nbsp;<span id="missrangeval">0</span><span>%</span>
+                    </div>
+                    <div class="row">
+                        <span>Speed Limit:</span> &nbsp;
+                        <input id="limitspeed" type="range" min="0" max="1500" step="50" value="0" oninput="Prc.setLimiter(null,this.value,'limitspeedval')"
+                            class="mini">&nbsp;<span id="limitspeedval">0</span><span>cpm</span>
+                    </div>
+                    <div class="row">
+                        <span>Accuracy Limit:</span> &nbsp;
+                        <input id="limitaccuracy" type="range" min="0" max="100" step="1" value="0" oninput="Prc.setLimiter(this.value,null,'limitaccuracyval')"
+                            class="mini">&nbsp;<span id="limitaccuracyval">0</span><span>%</span>
+                    </div>
+                    <div class="row" id="info_madeupmode" onmouseout="Prc.info()" onmouseover="Prc.info(this)"><span>Made-up
+                            Mode:&nbsp;</span><span>[</span><span onclick="Prc.setSpecialMode('Normal')" class="clk">Normal</span><span>|</span><span
+                            onclick="Prc.setSpecialMode('LeftHand')" class="clk">LeftHand</span><span>|</span><span
+                            onclick="Prc.setSpecialMode('RightHand')" class="clk">RightHand</span><span>|</span><span
+                            onclick="Prc.setSpecialMode('InTurn')" class="clk">InTurn</span><span>]</span>
+                    </div>
+                    <div class="row" id="info_leftcharset" onmouseout="Prc.info()" onmouseover="Prc.info(this)"><span>LeftHand
+                            Charset(<span onclick="prc_lefthandcharset.value='qwertasdfgzxcv';lefthandcharsetsave.onclick()"
                                 class="clk">Default</span>):</span>&nbsp;<input id="prc_lefthandcharset" type="text"
                             maxlength="50" value="qwertasdfgzxcv" style="width:10em"> &nbsp;<span id="lefthandcharsetsave"
-                            class="clk" onclick="Prc.WordAssembler.setLefthand(prc_lefthandcharset.value)" title="Set this text as lefthand character set,others will be the righthand character set. Leave nothing for default.">Save</span></div>
+                            class="clk" onclick="Prc.WordAssembler.setLefthand(prc_lefthandcharset.value)" title="Set this text as lefthand character set,others will be the righthand character set. Leave nothing for default.">Save</span>
+                    </div>
+                    <div class="row" id="info_madeupminwordlen" onmouseout="Prc.info()" onmouseover="Prc.info(this)"><span>Made-up
+                            Minimal
+                            Word Length:</span> &nbsp;<input id="specialwordlengthrange" type="range" min="0" max="100"
+                            step="1" value="0" oninput="TY.Ranger(this,'specialwordlengthrangeval',Prc.setSpecialWordLength)"
+                            class="mini"> &nbsp;<span id="specialwordlengthrangeval">0</span>
+                    </div>
                 </div>
                 <div class="col-4 smallrow bd-l" id="info_customtext" onmouseout="Prc.info()" onmouseover="Prc.info(this)">
                     <div class="row"><textarea id="prc_txtsource"></textarea>
@@ -223,4 +247,5 @@
 <script src="./dictionary_detail.js"></script>
 <script src="./dictionary_brief.js"></script>
 <script src="./tytjs.js"></script>
+
 </html>
