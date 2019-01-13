@@ -732,7 +732,7 @@ var TY = {
             _this.inppos = _this.einp.selectionStart;
 
             // 首个正确击键时开始计时
-            if (_this.timer == 0 && _this.inptxt.charAt(0) == _this.currentTxt.charAt(0)) {
+            if (_this.timer == 0 && _this.inptxt.charAt(0) === _this.currentTxt.charAt(0)) {
                 _this.timer = Date.now() - 1;
             }
 
@@ -842,9 +842,10 @@ var TY = {
                 <b>'wpm'</b>: words per minute.<br>\
                 <b>'cpm'</b>: characters per minute.<br>\
                 <b>1</b>wpm = <b>5</b>cpm.",
-                info: "<center>TyT<br><br>Make you type faster<br><br>By BLACKKITTY</center>"
+                info: "<a href='https://github.com/Blackkkitty/TyT'><center>TyT<br><br>Make you type faster<br><br>By BLACKKITTY</center></a>"
             };
-            _this.einfo.innerHTML = Infoes[e.id];
+            if (!e || !Infoes[e.id]) _this.einfo.innerHTML = Infoes['info'];
+            else _this.einfo.innerHTML = Infoes[e.id];
         };
         // 打字音效
         this.soundPlay = function () {
@@ -1005,6 +1006,7 @@ var TY = {
                 }
             };
 
+            // 显示文字
             function tprint(str) {
                 let Xpos = { x: 0 + 2, y: 11 };
                 ctx.font = "13px monospace";
@@ -1013,6 +1015,7 @@ var TY = {
                 ctx.fillText(str, Xpos.x, Xpos.y);
             }
 
+            // 画点
             function dot(point, radius, color) {
                 if (!radius) radius = 2;
                 if (!color) color = ctx.strokeStyle;
@@ -1024,6 +1027,7 @@ var TY = {
                 ctx.fillStyle = t;
             }
 
+            // 标记点
             function markit(point, radius) {
                 if (!radius) radius = 5;
                 ctx.beginPath();
@@ -1031,6 +1035,7 @@ var TY = {
                 ctx.stroke();
             }
 
+            // 计算平均值
             function getAvg(data, item) {
                 let sum = 0;
                 for (let v of data) sum += v[item];
@@ -1039,6 +1044,7 @@ var TY = {
                 return sum;
             }
 
+            // 数据缩放
             function zoom(data, len) {
                 if (data.length <= len) return data;
                 let ret = new Array();
@@ -1058,6 +1064,7 @@ var TY = {
                 return ret;
             }
 
+            // 重新计算贝塞尔曲线
             function getMultiBezier(data) {
                 let steps = multiBezierSteps;
                 let step = 1. / steps;
@@ -1097,6 +1104,7 @@ var TY = {
                 return z;
             }
 
+            // 点呈现数据
             function DotsDraw(data, color) {
                 if (!data || data.length < 1) return;
                 if (!color) color = ctx.strokeStyle;
@@ -1104,6 +1112,7 @@ var TY = {
                     dot(v, 2, color);
             }
 
+            // 平滑曲线呈现数据
             function SmoothDraw(data) {
                 if (!data || data.length < 1) return;
                 for (let i = 1; i < data.length; i++) {
@@ -1116,6 +1125,7 @@ var TY = {
                 }
             }
 
+            // 直线线呈现数据
             function LineDraw(data) {
                 if (!data || data.length < 1) return;
                 let last = null;
@@ -1128,6 +1138,7 @@ var TY = {
                 }
             }
 
+            // 呈现鼠标位置
             function locate(place) {
                 function crossline(p) {
                     ctx.strokeStyle = facolor;

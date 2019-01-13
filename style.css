@@ -63,6 +63,14 @@ footer {
     display: none !important
 }
 
+a{
+    text-decoration: none;
+}
+
+a:hover *{
+    color:"@strong" !important;
+}
+
 .container {
     width: 100%;
     max-width: 1080px;
@@ -368,7 +376,6 @@ textarea:focus {
 }
 
 #fulltext {
-    font-size: 23px;
     line-height: 1.1em;
     text-decoration: "@border";
     text-decoration-line: underline;
