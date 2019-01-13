@@ -19,7 +19,7 @@ div,
 header,
 footer,
 span {
-    transition: all 2000ms ease-in-out !important;
+    transition: all 1000ms ease-in-out !important;
     -webkit-transition: all 1000ms ease-in-out !important;
     -moz-transition: all 1000ms ease-in-out !important
 }
@@ -31,7 +31,7 @@ span {
     -webkit-user-select: none;
     color: "@text";
     background-color: transparent;
-    box-sizing: border-box
+    box-sizing: border-box;
 }
 
 body {
@@ -209,12 +209,16 @@ a:hover * {
 
 .clk {
     color: "@strong" !important;
-    cursor: pointer
+    cursor: pointer;
+    transition: all 0ms ease-in-out !important;
+    -webkit-transition: all 0ms ease-in-out !important;
+    -moz-transition: all 0ms ease-in-out !important
 }
 
 .clk:hover {
     color: "@strong" !important;
-    text-decoration: underline "@strong" solid
+    text-decoration: underline "@strong" dotted;
+    text-shadow: 0 0 2px "@strong" !important;
 }
 
 .small {
@@ -332,7 +336,8 @@ textarea:focus {
 .prc-state .large {
     color: "@strong";
     font-size: 3.6em;
-    font-weight: 300
+    font-weight: 300;
+    text-shadow: -1px -1px 0px "@text" !important;
 }
 
 .prc-state .miss {
