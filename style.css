@@ -19,9 +19,13 @@ div,
 header,
 footer,
 span {
-    transition: all 1000ms ease-in-out !important;
-    -webkit-transition: all 1000ms ease-in-out !important;
-    -moz-transition: all 1000ms ease-in-out !important
+    transition: color 2000ms ease-in-out !important;
+    -webkit-transition: color 1000ms ease-in-out !important;
+    -moz-transition: color 1000ms ease-in-out !important;
+
+    transition: background-color 2000ms ease-in-out !important;
+    -webkit-transition: background-color 1000ms ease-in-out !important;
+    -moz-transition: background-color 1000ms ease-in-out !important;
 }
 
 * {
